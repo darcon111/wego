@@ -318,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
                                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Log.d("UI thread", "I am the UI thread");
+                                            Log.d("UI thread", "I am the UI posi");
                                             mCategoriesAdapter.notifyDataSetChanged();
                                             menu();
                                         }
