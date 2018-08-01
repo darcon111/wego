@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -313,10 +315,16 @@ public class MainActivity extends AppCompatActivity {
 
                                 if(mListCategories.size()>0)
                                 {
+                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Log.d("UI thread", "I am the UI thread");
+                                            mCategoriesAdapter.notifyDataSetChanged();
+                                            menu();
+                                        }
+                                    });
 
-                                    mCategoriesAdapter.notifyDataSetChanged();
                                 }
-                                menu();
 
                                 pDialog.dismiss();
 
