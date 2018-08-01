@@ -154,6 +154,8 @@ public class MainActivity extends AppCompatActivity {
 
         validaTask(user.getEmail());
 
+        menu();
+
     }
 
     public void menu()
@@ -267,9 +269,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void validaTask(String email){
+
+        final JSONObject[] res = {null};
         //Showing the progress dialog
         pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-        pDialog.getProgressHelper().setBarColor(Color.parseColor(getString(R.string.colorAccent)));
+        //pDialog.getProgressHelper().setBarColor(Color.parseColor(getString(R.string.colorAccent)));
         pDialog.setTitleText(getResources().getString(R.string.auth));
         pDialog.setCancelable(true);
         pDialog.show();
@@ -285,9 +289,9 @@ public class MainActivity extends AppCompatActivity {
 
                         //Showing toast message of the response
 
-                        JSONObject res= null;
+
                         try {
-                            res = new JSONObject(responde);
+                            res[0] = new JSONObject(responde);
                         } catch (JSONException e) {
                             e.printStackTrace();
                             pDialog.dismiss();
@@ -295,38 +299,24 @@ public class MainActivity extends AppCompatActivity {
 
                         try {
 
-                            if(Constants.AESDecryptEntity(res.getString("result")).equals("OK") ){
-                                JSONArray mObjResp = res.getJSONArray("data");
-                                JSONObject mObj = mObjResp.getJSONObject(0);
+                            if(Constants.AESDecryptEntity(res[0].getString("result")).equals("OK") ){
 
 
 
-                                appPreferences.setUserId(Constants.AESDecryptEntity(mObj.getString("id_persona")));
-                                mObj = mObjResp.getJSONObject(1);
-                                appPreferences.setImagen(mObj.getString("imagen"));
+
+                                Handler handler = new Handler(Looper.getMainLooper());
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        Cargar(res[0]);
+
+                                    }
+                                });
 
 
-                                for (int x=2;x<mObjResp.length();x++)
-                                {
-                                    mObj = mObjResp.getJSONObject(x);
 
-                                    mListCategories.add(new Categories(Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("id"))),Constants.AESDecryptEntity(mObj.getString("nombre")),Constants.AESDecryptEntity(mObj.getString("descripcion")),mObj.getString("imagen")));
-                                }
 
-                                if(mListCategories.size()>0)
-                                {
-                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Log.d("UI thread", "I am the UI posi");
-                                            mCategoriesAdapter.notifyDataSetChanged();
-                                            menu();
-                                        }
-                                    });
-
-                                }
-
-                                pDialog.dismiss();
 
 
 
@@ -337,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 pDialog= new SweetAlertDialog(MainActivity.this, SweetAlertDialog.ERROR_TYPE);
                                 pDialog.setTitleText(getResources().getString(R.string.app_name));
-                                pDialog.setContentText(Constants.AESDecryptEntity(res.getString("message")));
+                                pDialog.setContentText(Constants.AESDecryptEntity(res[0].getString("message")));
                                 pDialog.setConfirmText(getResources().getString(R.string.ok));
                                 pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                             @Override
@@ -418,6 +408,43 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    }
+
+    void Cargar(JSONObject res)
+    {
+
+        final JSONArray[] mObjResp = {null};
+
+        try {
+            mObjResp[0] = res.getJSONArray("data");
+            JSONObject mObj = mObjResp[0].getJSONObject(0);
+
+            appPreferences.setUserId(Constants.AESDecryptEntity(mObj.getString("id_persona")));
+            mObj = mObjResp[0].getJSONObject(1);
+            appPreferences.setImagen(mObj.getString("imagen"));
+
+
+            for (int x = 2; x< mObjResp[0].length(); x++)
+            {
+                mObj = mObjResp[0].getJSONObject(x);
+
+                mListCategories.add(new Categories(Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("id"))),Constants.AESDecryptEntity(mObj.getString("nombre")),Constants.AESDecryptEntity(mObj.getString("descripcion")),mObj.getString("imagen")));
+            }
+
+            if(mListCategories.size()>0) {
+                        mCategoriesAdapter.notifyDataSetChanged();
+            }
+
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        pDialog.dismiss();
     }
 
 

@@ -110,7 +110,7 @@ public class ServiciesActivity extends AppCompatActivity {
     private void loadTask(String id){
         //Showing the progress dialog
         pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-        pDialog.getProgressHelper().setBarColor(Color.parseColor(getString(R.string.colorAccent)));
+        //pDialog.getProgressHelper().setBarColor(Color.parseColor(getString(R.string.colorAccent)));
         pDialog.setTitleText(getResources().getString(R.string.auth));
         pDialog.setCancelable(true);
         pDialog.show();
