@@ -136,9 +136,13 @@ public class MainActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
 
 
+        if(appPreferences.getUser().equals("")) {
+            String[] temp = user.getEmail().split("@");
+            name = temp[0];
+            appPreferences.setUser(name);
+        }
 
-        String[] temp = user.getEmail().split("@");
-        name = temp[0];
+        appPreferences.setActualizar("1");
 
 
         mCategoriesRecyclerView = (RecyclerView) findViewById(R.id.servicies_recycler_view);
@@ -154,109 +158,118 @@ public class MainActivity extends AppCompatActivity {
 
         validaTask(user.getEmail());
 
-        menu();
 
     }
 
     public void menu()
     {
-        mAdapter = new MenuAdapter(TITLES, ICONS, name, PROFILE, appPreferences.getImagen(), MainActivity.this);       // Creating the Adapter of MyAdapter class(which we are going to see in a bit)
 
-        mRecyclerView_main.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
+        if(appPreferences.getActualizar().equals("1")) {
 
-        mLayoutManager = new LinearLayoutManager(this);                 // Creating a layout Manager
+            appPreferences.setActualizar("0");
 
-        mRecyclerView_main.setLayoutManager(mLayoutManager);
+            mAdapter = new MenuAdapter(TITLES, ICONS, appPreferences.getUser(), PROFILE, appPreferences.getImagen(), MainActivity.this);       // Creating the Adapter of MyAdapter class(which we are going to see in a bit)
 
-        Drawer = (DrawerLayout) findViewById(R.id.DrawerLayout);        // Drawer object Assigned to the view
-        mDrawerToggle = new android.support.v7.app.ActionBarDrawerToggle(this, Drawer, toolbar, R.string.drawer_open, R.string.drawer_close) {
+            mRecyclerView_main.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
 
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
-                // open I am not going to put anything here)
-            }
+            mLayoutManager = new LinearLayoutManager(this);                 // Creating a layout Manager
 
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                // Code here will execute once drawer is closed
-            }
+            mRecyclerView_main.setLayoutManager(mLayoutManager);
 
-        }; // Drawer Toggle Object Made
+            Drawer = (DrawerLayout) findViewById(R.id.DrawerLayout);        // Drawer object Assigned to the view
+            mDrawerToggle = new android.support.v7.app.ActionBarDrawerToggle(this, Drawer, toolbar, R.string.drawer_open, R.string.drawer_close) {
 
-        Drawer.addDrawerListener(mDrawerToggle);
-
-        mRecyclerView_main.addOnItemTouchListener(new Constants.RecyclerTouchListener(getApplicationContext(), mRecyclerView_main, new Constants.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-                Intent intent;
-
-                switch (position) {
-                    case 1:
-
-                        break;
-                    case 2:
-
-                        break;
-                    case 3:
-
-                        break;
-                    case 4:
-
-                        break;
-
-                    case 5:
-
-
-
-
-
-                        break;
-
-                    case 6:
-
-                        pDialog = new SweetAlertDialog(MainActivity.this, SweetAlertDialog.NORMAL_TYPE);
-                        pDialog.setTitleText(getResources().getString(R.string.app_name));
-                        pDialog.setContentText(getResources().getString(R.string.msg_exit));
-                        pDialog.setConfirmText(getString(R.string.yes));
-                        pDialog.setCancelText(getString(R.string.no));
-                        pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sDialog) {
-                                        sDialog.dismissWithAnimation();
-                                        signOut();
-                                        finish();
-                                    }
-                                });
-                        pDialog.setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                        sweetAlertDialog.cancel();
-                                    }
-                                });
-                        pDialog.show();
-
-                        break;
-
-
-                    default:
-
-                        break;
+                @Override
+                public void onDrawerOpened(View drawerView) {
+                    super.onDrawerOpened(drawerView);
+                    // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
+                    // open I am not going to put anything here)
                 }
 
-                mDrawerToggle.onDrawerClosed(mRecyclerView_main);
-                Drawer.closeDrawers();
-                return;
-            }
-        }));
+                @Override
+                public void onDrawerClosed(View drawerView) {
+                    super.onDrawerClosed(drawerView);
+                    // Code here will execute once drawer is closed
+                }
+
+            }; // Drawer Toggle Object Made
+
+            Drawer.addDrawerListener(mDrawerToggle);
+
+            mRecyclerView_main.addOnItemTouchListener(new Constants.RecyclerTouchListener(getApplicationContext(), mRecyclerView_main, new Constants.ClickListener() {
+                @Override
+                public void onClick(View view, int position) {
+
+                }
+
+                @Override
+                public void onLongClick(View view, final int position) {
+
+                    Intent intent;
+
+                    switch (position) {
+                        case 1:
+
+                            break;
+                        case 2:
+
+                            break;
+                        case 3:
+
+                            break;
+                        case 4:
+
+                            break;
+
+                        case 5:
+
+
+                            break;
+
+                        case 6:
+
+                            pDialog = new SweetAlertDialog(MainActivity.this, SweetAlertDialog.NORMAL_TYPE);
+                            pDialog.setTitleText(getResources().getString(R.string.app_name));
+                            pDialog.setContentText(getResources().getString(R.string.msg_exit));
+                            pDialog.setConfirmText(getString(R.string.yes));
+                            pDialog.setCancelText(getString(R.string.no));
+                            pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sDialog) {
+                                    sDialog.dismissWithAnimation();
+                                    signOut();
+                                    finish();
+                                }
+                            });
+                            pDialog.setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.cancel();
+                                }
+                            });
+                            pDialog.show();
+
+                            break;
+
+
+                        default:
+
+                            break;
+                    }
+
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDrawerToggle.onDrawerClosed(mRecyclerView_main);
+                            Drawer.closeDrawers();
+                        }
+                    }, 200);
+
+
+                }
+            }));
+        }
     }
 
 
@@ -273,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
         final JSONObject[] res = {null};
         //Showing the progress dialog
         pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-        //pDialog.getProgressHelper().setBarColor(Color.parseColor(getString(R.string.colorAccent)));
+        pDialog.getProgressHelper().setBarColor(Color.parseColor(getString(R.string.colorAccent)));
         pDialog.setTitleText(getResources().getString(R.string.auth));
         pDialog.setCancelable(true);
         pDialog.show();
@@ -304,15 +317,70 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                                Handler handler = new Handler(Looper.getMainLooper());
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
+                                //Handler handler = new Handler(Looper.getMainLooper());
+                               // handler.post(new Runnable() {
+                                 //   @Override
+                                 //   public void run() {
 
-                                        Cargar(res[0]);
+                                final JSONArray[] mObjResp = {null};
+
+                                try {
+                                    mObjResp[0] = res[0].getJSONArray("data");
+                                    JSONObject mObj = mObjResp[0].getJSONObject(0);
+
+                                    appPreferences.setUserId(Constants.AESDecryptEntity(mObj.getString("id_persona")));
+                                    mObj = mObjResp[0].getJSONObject(1);
+                                    appPreferences.setImagen(mObj.getString("imagen"));
+
+                                    mObj = mObjResp[0].getJSONObject(2);
+
+                                    if(!appPreferences.getUser().equals(Constants.AESDecryptEntity(mObj.getString("nombres"))))
+                                    {
+                                        appPreferences.setUser(Constants.AESDecryptEntity(mObj.getString("nombres")));
+                                        appPreferences.setActualizar("1");
+                                        menu();
+                                    }
+
+
+                                    for (int x = 3; x< mObjResp[0].length(); x++)
+                                    {
+                                        mObj = mObjResp[0].getJSONObject(x);
+
+                                        //mListCategories.add(new Categories(Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("id"))),Constants.AESDecryptEntity(mObj.getString("nombre")),Constants.AESDecryptEntity(mObj.getString("descripcion")),mObj.getString("imagen")));
+                                        //mCategoriesAdapter.notifyItemChanged(x-2);
+
+                                        final JSONObject finalMObj = mObj;
+                                        final int finalX = x;
+                                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    mListCategories.add(new Categories(Integer.parseInt(Constants.AESDecryptEntity(finalMObj.getString("id"))),Constants.AESDecryptEntity(finalMObj.getString("nombre")),Constants.AESDecryptEntity(finalMObj.getString("descripcion")), finalMObj.getString("imagen")));
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                                mCategoriesAdapter.notifyItemChanged(finalX -3);
+                                            }
+                                        });
+
 
                                     }
-                                });
+
+
+
+
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+
+                                pDialog.dismiss();
+
+                                  //  }
+                                //});
 
 
 
@@ -410,44 +478,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    void Cargar(JSONObject res)
-    {
-
-        final JSONArray[] mObjResp = {null};
-
-        try {
-            mObjResp[0] = res.getJSONArray("data");
-            JSONObject mObj = mObjResp[0].getJSONObject(0);
-
-            appPreferences.setUserId(Constants.AESDecryptEntity(mObj.getString("id_persona")));
-            mObj = mObjResp[0].getJSONObject(1);
-            appPreferences.setImagen(mObj.getString("imagen"));
-
-
-            for (int x = 2; x< mObjResp[0].length(); x++)
-            {
-                mObj = mObjResp[0].getJSONObject(x);
-
-                mListCategories.add(new Categories(Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("id"))),Constants.AESDecryptEntity(mObj.getString("nombre")),Constants.AESDecryptEntity(mObj.getString("descripcion")),mObj.getString("imagen")));
-            }
-
-            if(mListCategories.size()>0) {
-                        mCategoriesAdapter.notifyDataSetChanged();
-            }
-
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        pDialog.dismiss();
-    }
-
-
 
 
 
@@ -540,12 +570,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void profile(View v)
-    {
-        Intent intent = new Intent(MainActivity.this, PerfilActivity.class);
-        startActivity(intent);
-    }
+    @Override
+    public void onResume() {
+        super.onResume();
 
+        menu();
+
+
+    }
 
 
     @Override

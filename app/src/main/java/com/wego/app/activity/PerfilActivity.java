@@ -1,6 +1,7 @@
 package com.wego.app.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -11,7 +12,12 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +30,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -38,9 +45,21 @@ import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.GifRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.FirebaseTooManyRequestsException;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.auth.UserInfo;
 import com.vansuita.pickimage.bean.PickResult;
 import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
@@ -70,6 +89,8 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import com.vansuita.pickimage.listeners.IPickResult;
 import com.wego.app.holder.Categories;
 
@@ -82,7 +103,10 @@ public class PerfilActivity extends AppCompatActivity implements
     private String TAG = PerfilActivity.class.getName();
     private static AppPreferences app;
 
-    private EditText txtIdentificacion,txtNombres,txtApellidos,txtFecha,txttelefono;
+    private EditText txtIdentificacion,txtNombres,txtApellidos,txtFecha,txttelefono,txtpass,txtnewpass;
+
+    private TextInputLayout textInputLayout8,textInputLayout7;
+
     private CircleImageView img;
 
     private static final int PICK_FROM_CAMERA = 1;
@@ -122,6 +146,13 @@ public class PerfilActivity extends AppCompatActivity implements
 
     private Toolbar toolbar;
 
+    private FirebaseUser user;
+
+    private String telefono= "";
+
+    private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallBacks= null;
+
+    private FrameLayout fragment;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -138,8 +169,20 @@ public class PerfilActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_perfil);
 
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
         app = new AppPreferences(getApplicationContext());
+
+
+        List<String> listProvider =user.getProviders();
+        if(!listProvider.get(0).equals("password")){
+
+            textInputLayout7 = (TextInputLayout) findViewById(R.id.textInputLayout7);
+            textInputLayout8 = (TextInputLayout) findViewById(R.id.textInputLayout8);
+            textInputLayout7.setVisibility(View.GONE);
+            textInputLayout8.setVisibility(View.GONE);
+
+        }
 
 
 
@@ -161,6 +204,12 @@ public class PerfilActivity extends AppCompatActivity implements
         txtApellidos= (EditText) findViewById(R.id.txtApellidos);
         txtFecha= (EditText) findViewById(R.id.txtFecha);
         txttelefono= (EditText) findViewById(R.id.txttelefono);
+        txtpass= (EditText) findViewById(R.id.txtpass);
+        txtnewpass= (EditText) findViewById(R.id.txtnewpass);
+        fragment= (FrameLayout) findViewById(R.id.fragment);
+
+
+
         img=(CircleImageView) findViewById(R.id.imgPerfil);
 
         tipo_identificacion=(MaterialSpinner) findViewById(R.id.tipo_identificacion);
@@ -185,76 +234,163 @@ public class PerfilActivity extends AppCompatActivity implements
             public void onClick(View v) {
 
 
-                    if(tipo_identificacion.getSelectedItemPosition()==0){
+                /*if(tipo_identificacion.getSelectedItemPosition()==0){
 
-                        tipo_identificacion.setError(getResources().getString(R.string.error_tipo_identificacion));
+                    tipo_identificacion.setError(getResources().getString(R.string.error_tipo_identificacion));
+                    return;
+
+                }*/
+
+
+                /*if(txtIdentificacion.getText().toString().trim().equals("")){
+
+                    txtIdentificacion.setError(getResources().getString(R.string.error_identificacion));
+                    return;
+
+                }
+
+                if(genero.getSelectedItemPosition()==0){
+
+                    genero.setError(getResources().getString(R.string.error_genero));
+                    return;
+
+                }*/
+
+
+
+                if(txtNombres.getText().toString().trim().equals("")){
+
+                    txtNombres.setError(getResources().getString(R.string.error_nombres));
+                    return;
+
+                }
+
+
+                if(txtApellidos.getText().toString().trim().equals("")){
+
+                    txtApellidos.setError(getResources().getString(R.string.error_apellido));
+                    return;
+
+                }
+
+                if(txttelefono.getText().toString().trim().equals("")){
+
+                    txttelefono.setError(getResources().getString(R.string.error_telefono));
+                    return;
+
+                }
+
+                /*if(estado_civil.getSelectedItemPosition()==0){
+
+                    estado_civil.setError(getResources().getString(R.string.error_estado_civil));
+                    return;
+
+                }
+
+                if(ciudad.getSelectedItemPosition()==0){
+
+                    ciudad.setError(getResources().getString(R.string.error_ciudad));
+                    return;
+
+                }*/
+
+
+
+                if(txtFecha.getText().toString().trim().equals("")){
+
+                    txtFecha.setError(getResources().getString(R.string.error_fecha));
+                    return;
+
+                }
+
+
+
+                if(!txtpass.getText().toString().equals(""))
+                {
+                    if(txtnewpass.getText().toString().trim().length()<6)
+                    {
+                        txtnewpass.setError(getResources().getString(R.string.error_newpass));
                         return;
-
+                    }
+                }else
+                {
+                    if(!txtnewpass.getText().toString().trim().equals("") && txtpass.getText().toString().equals("")){
+                        txtpass.setError(getResources().getString(R.string.error_pass));
+                        return;
                     }
 
-
-                    if(txtIdentificacion.getText().toString().trim().equals("")){
-
-                     txtIdentificacion.setError(getResources().getString(R.string.error_identificacion));
-                        return;
-
-                    }
-
-                    if(genero.getSelectedItemPosition()==0){
-
-                        genero.setError(getResources().getString(R.string.error_genero));
-                        return;
-
-                    }
+                }
 
 
+                if(!txtpass.getText().toString().trim().equals("") && !txtnewpass.getText().toString().trim().equals(""))
+                {
 
-                    if(txtNombres.getText().toString().trim().equals("")){
-
-                        txtNombres.setError(getResources().getString(R.string.error_nombres));
-                        return;
-
-                    }
+                    AuthCredential credential = EmailAuthProvider
+                            .getCredential(user.getEmail(), txtpass.getText().toString().trim());
 
 
-                    if(txtApellidos.getText().toString().trim().equals("")){
+                    user.reauthenticate(credential)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        user.updatePassword(txtnewpass.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Log.d(TAG, "Password updated");
 
-                        txtApellidos.setError(getResources().getString(R.string.error_apellido));
-                        return;
-
-                    }
-
-                    if(txttelefono.getText().toString().trim().equals("")){
-
-                        txttelefono.setError(getResources().getString(R.string.error_telefono));
-                        return;
-
-                    }
-
-                    if(estado_civil.getSelectedItemPosition()==0){
-
-                        estado_civil.setError(getResources().getString(R.string.error_estado_civil));
-                        return;
-
-                    }
-
-                    if(ciudad.getSelectedItemPosition()==0){
-
-                        ciudad.setError(getResources().getString(R.string.error_ciudad));
-                        return;
-
-                    }
+                                                    saveTask(image);
 
 
+                                                } else {
 
-                    if(txtFecha.getText().toString().trim().equals("")){
+                                                    pDialog = new SweetAlertDialog(PerfilActivity.this, SweetAlertDialog.ERROR_TYPE);
+                                                    pDialog.setTitleText(getResources().getString(R.string.app_name));
+                                                    pDialog.setContentText(getResources().getString(R.string.error_newpass_update));
+                                                    pDialog.setConfirmText(getResources().getString(R.string.ok));
+                                                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                        @Override
+                                                        public void onClick(SweetAlertDialog sDialog) {
+                                                            sDialog.dismissWithAnimation();
+                                                            return;
 
-                        txtFecha.setError(getResources().getString(R.string.error_fecha));
-                        return;
+                                                        }
+                                                    });
+                                                    pDialog.show();
 
-                    }
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        pDialog = new SweetAlertDialog(PerfilActivity.this, SweetAlertDialog.ERROR_TYPE);
+                                        pDialog.setTitleText(getResources().getString(R.string.app_name));
+                                        pDialog.setContentText(getResources().getString(R.string.error_newpass_update));
+                                        pDialog.setConfirmText(getResources().getString(R.string.ok));
+                                        pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                            @Override
+                                            public void onClick(SweetAlertDialog sDialog) {
+                                                sDialog.dismissWithAnimation();
+                                                return;
 
-                    saveTask(image,String.valueOf(arrayIdentificacion.get(tipo_identificacion.getSelectedItemPosition()-1).getId()),String.valueOf(arrayCiudad.get(ciudad.getSelectedItemPosition()-1).getId()),String.valueOf(arrayEstadoCivil.get(estado_civil.getSelectedItemPosition()-1).getId()));
+                                            }
+                                        });
+                                        pDialog.show();
+                                    }
+                                }
+                            });
+
+
+                }else
+                {
+
+                    saveTask(image);
+
+
+                }
+
+
+
 
             }
         });
@@ -283,16 +419,18 @@ public class PerfilActivity extends AppCompatActivity implements
             }
         });
 
-        dataTask();
+
     }
 
 
     private void carga_combo()
     {
+
+
         if(list_tipo_identificacion.size()>0)
         {
             // Creating adapter for spinner
-            dataAdapter_tipo_identificacion = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_tipo_identificacion);
+            dataAdapter_tipo_identificacion= new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_tipo_identificacion);
 
             // Drop down layout style - list view with radio button
             dataAdapter_tipo_identificacion.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -305,60 +443,63 @@ public class PerfilActivity extends AppCompatActivity implements
             tipo_identificacion.setSelection(select_tipo_identificacion+1);
 
 
-
         }
 
 
-        if(list_estado_civil.size()>0)
-        {
-            // Creating adapter for spinner
-            dataAdapter_estado = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_estado_civil);
 
-            // Drop down layout style - list view with radio button
-            dataAdapter_estado.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        if(list_estado_civil.size()>0)
+                        {
+                            // Creating adapter for spinner
+                            dataAdapter_estado = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_estado_civil);
 
-            // attaching data adapter to spinner
-            estado_civil.setAdapter(dataAdapter_estado);
+                            // Drop down layout style - list view with radio button
+                            dataAdapter_estado.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-
-
-                estado_civil.setSelection(select_estado+1);
-
-
-        }
-
-        if(list_cuidad.size()>0)
-        {
-            // Creating adapter for spinner
-            dataAdapter_ciudad= new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_cuidad);
-
-            // Drop down layout style - list view with radio button
-            dataAdapter_ciudad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-            // attaching data adapter to spinner
-            ciudad.setAdapter(dataAdapter_ciudad);
+                            // attaching data adapter to spinner
+                            estado_civil.setAdapter(dataAdapter_estado);
 
 
 
-                ciudad.setSelection(select_ciudad+1);
-
-        }
-        list_genero = new ArrayList<String>();
-        list_genero.add("Masculino");
-        list_genero.add("Femenino");
-
-        // Creating adapter for spinner
-        dataAdapter_genero= new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_genero);
-
-        // Drop down layout style - list view with radio button
-        dataAdapter_genero.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
-        genero.setAdapter(dataAdapter_genero);
+                                estado_civil.setSelection(select_estado+1);
 
 
+                        }
 
-        genero.setSelection(select_genero+1);
+                        if(list_cuidad.size()>0)
+                        {
+                            // Creating adapter for spinner
+                            dataAdapter_ciudad= new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_cuidad);
+
+                            // Drop down layout style - list view with radio button
+                            dataAdapter_ciudad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                            // attaching data adapter to spinner
+                            ciudad.setAdapter(dataAdapter_ciudad);
+
+
+
+                                ciudad.setSelection(select_ciudad+1);
+
+                        }
+                        list_genero = new ArrayList<String>();
+                        list_genero.add("Masculino");
+                        list_genero.add("Femenino");
+
+                        // Creating adapter for spinner
+                        dataAdapter_genero= new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_genero);
+
+                        // Drop down layout style - list view with radio button
+                        dataAdapter_genero.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                        // attaching data adapter to spinner
+                        genero.setAdapter(dataAdapter_genero);
+
+
+
+                        genero.setSelection(select_genero+1);
+
+
+
 
 
     }
@@ -393,90 +534,171 @@ public class PerfilActivity extends AppCompatActivity implements
 
                             if(res.getString("result").equals("OK") ){
                                 JSONArray mObjResp = res.getJSONArray("data");
-                                JSONObject mObj = mObjResp.getJSONObject(0);
-
-                               txtNombres.setText(Constants.AESDecryptEntity(mObj.getString("nombres")));
-                               txtApellidos.setText(Constants.AESDecryptEntity(mObj.getString("apellidos")));
-                               txtFecha.setText(Constants.AESDecryptEntity(mObj.getString("fecha_nacimiento")));
-                               txtIdentificacion.setText(Constants.AESDecryptEntity(mObj.getString("identificacion")));
-                               txttelefono.setText(Constants.AESDecryptEntity(mObj.getString("telefono")));
-
-                                select_tipo_identificacion = Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("tipo_identificacion")));
-                                select_estado = Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("estado_civil")));
-                                select_ciudad = Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("ciudad_id")));
-                                select_genero = Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("genero")));
+                                final JSONObject mObj = mObjResp.getJSONObject(0);
 
 
-                                JSONArray list = new JSONArray(mObj.getString("list_tipo_identificacion"));
-                                list_tipo_identificacion = new ArrayList<String>();
-                                arrayIdentificacion = new ArrayList<Identificacion>();
 
-                                for (int x=0;x<list.length();x++)
-                                {
-                                    JSONObject temp= list.getJSONObject(x);
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
 
-                                    list_tipo_identificacion.add(Constants.AESDecryptEntity(temp.getString("nombre")));
-                                    arrayIdentificacion.add(new Identificacion(Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))),Constants.AESDecryptEntity(temp.getString("nombre"))));
+                                            txtNombres.setText(Constants.AESDecryptEntity(mObj.getString("nombres")));
+                                            txtApellidos.setText(Constants.AESDecryptEntity(mObj.getString("apellidos")));
+                                            txtFecha.setText(Constants.AESDecryptEntity(mObj.getString("fecha_nacimiento")));
+                                            txtIdentificacion.setText(Constants.AESDecryptEntity(mObj.getString("identificacion")));
 
-                                    if (Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))) == select_tipo_identificacion)
-                                    {
-                                        select_tipo_identificacion = x;
+                                            telefono =  Constants.AESDecryptEntity(mObj.getString("telefono"));
+                                            txttelefono.setText(telefono);
+
+                                            select_tipo_identificacion = Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("tipo_identificacion")));
+                                            select_estado = Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("estado_civil")));
+                                            select_ciudad = Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("ciudad_id")));
+                                            select_genero = Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("genero")));
+
+
+
+
+                                            String imagen= mObj.getString("imagen");
+
+                                            if(!imagen.trim().equals(""))
+                                            {
+                                                Glide.with(getApplicationContext())
+                                                        .load(imagen)
+                                                        .fitCenter()
+                                                        .into(img);
+                                            }
+
+
+
+
+
+
+
+
+
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
                                     }
+                                });
 
-                                }
+
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        JSONArray list = null;
+                                        try {
+                                            list = new JSONArray(mObj.getString("list_tipo_identificacion"));
+
+                                        list_tipo_identificacion = new ArrayList<String>();
+                                        arrayIdentificacion = new ArrayList<Identificacion>();
+
+                                        for (int x=0;x<list.length();x++)
+                                        {
+                                            JSONObject temp= list.getJSONObject(x);
+
+                                            list_tipo_identificacion.add(Constants.AESDecryptEntity(temp.getString("nombre")));
+                                            arrayIdentificacion.add(new Identificacion(Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))),Constants.AESDecryptEntity(temp.getString("nombre"))));
+
+                                            if (Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))) == select_tipo_identificacion)
+                                            {
+                                                select_tipo_identificacion = x;
+                                            }
+
+                                        }
 
 
-                                JSONArray list2 = new JSONArray(mObj.getString("list_estado_civil"));
-                                list_estado_civil = new ArrayList<String>();
-                                arrayEstadoCivil = new ArrayList<EstadoCivil>();
-                                for (int x=0;x<list2.length();x++)
-                                {
-                                    JSONObject temp = list2.getJSONObject(x);
 
-                                    list_estado_civil.add(Constants.AESDecryptEntity(temp.getString("nombre")));
-                                    arrayEstadoCivil.add(new EstadoCivil(Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))),Constants.AESDecryptEntity(temp.getString("nombre"))));
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
 
-                                    if (Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))) == select_estado)
-                                    {
-                                        select_estado = x;
+
                                     }
+                                });
+
+
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        try {
+
+                                        JSONArray list2 = new JSONArray(mObj.getString("list_estado_civil"));
+                                        list_estado_civil = new ArrayList<String>();
+                                        arrayEstadoCivil = new ArrayList<EstadoCivil>();
+                                        for (int x=0;x<list2.length();x++)
+                                        {
+                                            JSONObject temp = list2.getJSONObject(x);
+
+                                            list_estado_civil.add(Constants.AESDecryptEntity(temp.getString("nombre")));
+                                            arrayEstadoCivil.add(new EstadoCivil(Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))),Constants.AESDecryptEntity(temp.getString("nombre"))));
+
+                                            if (Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))) == select_estado)
+                                            {
+                                                select_estado = x;
+                                            }
 
 
 
-                                }
+                                        }
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
 
 
-                                JSONArray list3 = new JSONArray(mObj.getString("list_ciudad"));
-                                list_cuidad = new ArrayList<String>();
-                                arrayCiudad = new ArrayList<Ciudad>();
-                                for (int x=0;x<list3.length();x++)
-                                {
-                                    JSONObject temp = list3.getJSONObject(x);
 
-                                    list_cuidad.add(Constants.AESDecryptEntity(temp.getString("nombre")));
-                                    arrayCiudad.add(new Ciudad(Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))),Constants.AESDecryptEntity(temp.getString("nombre"))));
-
-                                    if (Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))) == select_ciudad)
-                                    {
-                                        select_ciudad = x;
                                     }
-
-                                }
-
-
-                               String imagen= mObj.getString("imagen");
-
-                               if(!imagen.trim().equals(""))
-                               {
-                                   Glide.with(getApplicationContext())
-                                           .load(imagen)
-                                           .fitCenter()
-                                           .into(img);
-                               }
-
-                                carga_combo();
+                                });
 
 
+
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        try {
+
+                                            JSONArray list3 = new JSONArray(mObj.getString("list_ciudad"));
+                                            list_cuidad = new ArrayList<String>();
+                                            arrayCiudad = new ArrayList<Ciudad>();
+                                            for (int x=0;x<list3.length();x++)
+                                            {
+                                                JSONObject temp = list3.getJSONObject(x);
+
+                                                list_cuidad.add(Constants.AESDecryptEntity(temp.getString("nombre")));
+                                                arrayCiudad.add(new Ciudad(Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))),Constants.AESDecryptEntity(temp.getString("nombre"))));
+
+                                                if (Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))) == select_ciudad)
+                                                {
+                                                    select_ciudad = x;
+                                                }
+
+                                            }
+
+                                            carga_combo();
+
+
+
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+
+
+                                    }
+                                });
 
                                 pDialog.dismiss();
 
@@ -572,8 +794,48 @@ public class PerfilActivity extends AppCompatActivity implements
 
 
 
-    private void saveTask(final String image,final String tipo_identificacion,final String ciudad,final String estado_civil){
+    private void saveTask(final String image){
         //Showing the progress dialog
+
+
+        /*if(!telefono.equals(txttelefono.getText().toString().trim()))
+        {
+
+            fragment.setVisibility(View.VISIBLE);
+
+            mCallBacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                @Override
+                public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+                    Log.d("JEJE", "onVerificationCompleted:" + phoneAuthCredential);
+
+
+                    fragment.setVisibility(View.GONE);
+
+
+                }
+
+                @Override
+                public void onVerificationFailed(FirebaseException e) {
+                    Log.w("JEJE", "onVerificationFailed", e);
+                    if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                        Log.d("JEJE", "INVALID REQUEST");
+                    } else if (e instanceof FirebaseTooManyRequestsException) {
+                        Log.d("JEJE", "Too many Request");
+                    }
+                }
+                @Override
+                public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                    super.onCodeSent(s, forceResendingToken);
+                    Log.d("JEJE", "onCodeSent:" + s);
+                    //mResendToken = forceResendingToken;
+                    loadVerification(s, txttelefono.getText().toString().trim());
+                }
+            };
+
+
+            verifyPhone("+593985086078",mCallBacks);
+        }*/
+
 
         pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(Color.parseColor(getString(R.string.colorAccent)));
@@ -603,9 +865,9 @@ public class PerfilActivity extends AppCompatActivity implements
                             if(res.getString("result").equals("OK") ){
                                 JSONArray mObjResp = res.getJSONArray("data");
 
+                                app.setUser(txtNombres.getText().toString().trim()+" "+ txtApellidos.getText().toString().trim());
 
-                                //txtNombres.setText(Constants.AESDecryptEntity(mObj.getString("nombres")));
-
+                                app.setActualizar("1");
 
                                 pDialog.dismiss();
 
@@ -617,8 +879,7 @@ public class PerfilActivity extends AppCompatActivity implements
                                     @Override
                                     public void onClick(SweetAlertDialog sDialog) {
                                         sDialog.dismissWithAnimation();
-                                        FirebaseAuth.getInstance().signOut();
-                                        LoginManager.getInstance().logOut();
+                                        finish();
                                     }
                                 });
                                 pDialog.show();
@@ -635,13 +896,13 @@ public class PerfilActivity extends AppCompatActivity implements
                                 pDialog.setContentText(res.getString("message"));
                                 pDialog.setConfirmText(getResources().getString(R.string.ok));
                                 pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                            @Override
-                                            public void onClick(SweetAlertDialog sDialog) {
-                                                sDialog.dismissWithAnimation();
-                                                FirebaseAuth.getInstance().signOut();
-                                                LoginManager.getInstance().logOut();
-                                            }
-                                        });
+                                    @Override
+                                    public void onClick(SweetAlertDialog sDialog) {
+                                        sDialog.dismissWithAnimation();
+                                        FirebaseAuth.getInstance().signOut();
+                                        LoginManager.getInstance().logOut();
+                                    }
+                                });
                                 pDialog.show();
 
 
@@ -691,13 +952,13 @@ public class PerfilActivity extends AppCompatActivity implements
                     params.put("userid", Constants.AESEncryptEntity(app.getUserId()));
                     params.put("nombres", Constants.AESEncryptEntity(txtNombres.getText().toString()));
                     params.put("apellidos", Constants.AESEncryptEntity(txtApellidos.getText().toString()));
-                    params.put("identificacion", Constants.AESEncryptEntity(txtIdentificacion.getText().toString()));
+                    //params.put("identificacion", Constants.AESEncryptEntity(txtIdentificacion.getText().toString()));
                     params.put("fecha_nacimiento", Constants.AESEncryptEntity(txtFecha.getText().toString()));
                     params.put("telefono", Constants.AESEncryptEntity(txttelefono.getText().toString()));
 
-                    params.put("tipo_identificacion", Constants.AESEncryptEntity(tipo_identificacion));
-                    params.put("estado_civil", Constants.AESEncryptEntity(estado_civil));
-                    params.put("ciudad_id", Constants.AESEncryptEntity(ciudad));
+                    //params.put("tipo_identificacion", Constants.AESEncryptEntity(tipo_identificacion));
+                    // params.put("estado_civil", Constants.AESEncryptEntity(estado_civil));
+                    // params.put("ciudad_id", Constants.AESEncryptEntity(ciudad));
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -725,6 +986,30 @@ public class PerfilActivity extends AppCompatActivity implements
 
 
 
+
+
+    }
+
+    public void verifyPhone(String phoneNumber, PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks){
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                phoneNumber,        // Phone number to verify
+                60,                 // Timeout duration
+                TimeUnit.SECONDS,   // Unit of timeout
+                this,               // Activity (for callback binding)
+                mCallbacks);        // OnVerificationStateChangedCallback
+    }
+
+
+
+    public void loadVerification(String codeID, String phone){
+        Verification verification = new Verification();
+        Bundle args = new Bundle();
+        args.putString(Verification.ARGS_PHONE, phone);
+        args.putString(Verification.ARGS_VER_CODE, codeID);
+        verification.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment, verification).commit();
     }
 
     @Override
@@ -903,6 +1188,14 @@ public class PerfilActivity extends AppCompatActivity implements
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        dataTask();
+
     }
 
 

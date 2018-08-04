@@ -68,7 +68,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_weight="1"
-                    android:onClick="profile"
                     android:text="Editar Perfil"
                     android:textColor="@color/colorIcons"
                     android:textSize="14sp" />

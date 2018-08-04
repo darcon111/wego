@@ -33,7 +33,7 @@
     <string name="cerrar">Cerrar</string>
     <string name="enviar">Enviar</string>
     <string name="auth">Cargando...</string>
-    <string name="error_pass">Ingrese Contraseña</string>
+    <string name="error_pass">Ingrese su Contraseña</string>
     <string name="error_login_pass">Contraseña Incorrecta</string>
     <string name="servicies">Seleccione el servicio que necesite</string>
     <string name="error_pass_debil">Contraseña demasiado debil</string>
@@ -62,6 +62,9 @@
     <string name="error_genero">Seleccione el genero</string>
     <string name="error_estado_civil">Seleccione su estado civil</string>
     <string name="error_ciudad">Seleccione su ciudad</string>
+    <string name="nueva_pass">Nueva contraseña</string>
+    <string name="error_newpass">Ingrese la nueva contraseña minimo 6 caracteres</string>
+    <string name="error_newpass_update">Contraseña incorrecta ingresela nuevamente</string>
 
 
     <string name="colorAccent">#d11313</string>

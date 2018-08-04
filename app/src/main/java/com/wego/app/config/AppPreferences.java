@@ -22,6 +22,7 @@ public class AppPreferences {
     public static final String light = "com.wego.app.light";
     public static final String noti = "com.wego.app.noti";
     public static final String mensajes = "com.advancehdt.flyers.mensajes";
+    public static final String actualizar = "com.advancehdt.flyers.actualizar";
 
 
     public  String getFirebasetoken() {
@@ -76,6 +77,19 @@ public class AppPreferences {
     {
         return  appPreferences.getString(mensajes,"0");
     }
+
+
+    public String getActualizar()
+    {
+        return  appPreferences.getString(actualizar,"0");
+    }
+
+    public void setActualizar(String mActualizar) {
+        editor = appPreferences.edit();
+        editor.putString(actualizar, mActualizar);
+        editor.commit();
+    }
+
 
     public void setUser(String mUser) {
         editor = appPreferences.edit();
