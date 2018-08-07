@@ -53,7 +53,7 @@
     <string name="error_fecha">Ingrese su fecha nacimiento</string>
     <string name="error_identificacion">Ingrese su identificación</string>
     <string name="telefono">Telefono</string>
-    <string name="error_telefono">Ingrese su número de telefono</string>
+    <string name="error_telefono">Ingrese un número de telefono validado</string>
     <string name="tipo_identificacion">Tipo de Identificación</string>
     <string name="genero">Genero</string>
     <string name="estado_civil">Estado civil</string>
@@ -65,7 +65,11 @@
     <string name="nueva_pass">Nueva contraseña</string>
     <string name="error_newpass">Ingrese la nueva contraseña minimo 6 caracteres</string>
     <string name="error_newpass_update">Contraseña incorrecta ingresela nuevamente</string>
-
+    <string name="validate_num">Validando número telefonico...</string>
+    <string name="error_change_email">Error al cambiar email</string>
+    <string name="error_need_pass">Para cambiar el email necesita el password</string>
+    <string name="update_email">Valide nuevamente su email</string>
+    <string name="error_validate_num">Error al validar número</string>
 
     <string name="colorAccent">#d11313</string>
 

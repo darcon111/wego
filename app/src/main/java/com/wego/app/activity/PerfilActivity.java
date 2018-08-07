@@ -103,7 +103,7 @@ public class PerfilActivity extends AppCompatActivity implements
     private String TAG = PerfilActivity.class.getName();
     private static AppPreferences app;
 
-    private EditText txtIdentificacion,txtNombres,txtApellidos,txtFecha,txttelefono,txtpass,txtnewpass;
+    private EditText txtIdentificacion,txtNombres,txtApellidos,txtFecha,txttelefono,txtpass,txtnewpass,txtemail;
 
     private TextInputLayout textInputLayout8,textInputLayout7;
 
@@ -153,6 +153,8 @@ public class PerfilActivity extends AppCompatActivity implements
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallBacks= null;
 
     private FrameLayout fragment;
+    private boolean changeEmail=false;
+    private String provider="";
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -175,7 +177,8 @@ public class PerfilActivity extends AppCompatActivity implements
 
 
         List<String> listProvider =user.getProviders();
-        if(!listProvider.get(0).equals("password")){
+        provider=listProvider.get(0);
+        if(!provider.equals("password")){
 
             textInputLayout7 = (TextInputLayout) findViewById(R.id.textInputLayout7);
             textInputLayout8 = (TextInputLayout) findViewById(R.id.textInputLayout8);
@@ -206,6 +209,8 @@ public class PerfilActivity extends AppCompatActivity implements
         txttelefono= (EditText) findViewById(R.id.txttelefono);
         txtpass= (EditText) findViewById(R.id.txtpass);
         txtnewpass= (EditText) findViewById(R.id.txtnewpass);
+        txtemail= (EditText) findViewById(R.id.txtemail);
+
         fragment= (FrameLayout) findViewById(R.id.fragment);
 
 
@@ -273,10 +278,45 @@ public class PerfilActivity extends AppCompatActivity implements
 
                 }
 
-                if(txttelefono.getText().toString().trim().equals("")){
+                if(!Constants.validatPhone(txttelefono.getText().toString().trim())){
 
                     txttelefono.setError(getResources().getString(R.string.error_telefono));
                     return;
+
+                }
+
+
+                if(provider.equals("password")){
+                    if(!txtpass.getText().toString().equals(""))
+                    {
+                        if(txtnewpass.getText().toString().trim().length()<6)
+                        {
+                            txtnewpass.setError(getResources().getString(R.string.error_newpass));
+                            return;
+                        }
+                    }else
+                    {
+                        if(!txtnewpass.getText().toString().trim().equals("") && txtpass.getText().toString().equals("")){
+                            txtpass.setError(getResources().getString(R.string.error_pass));
+                            return;
+                        }
+
+                    }
+                }
+
+
+
+                if(!telefono.equals(txttelefono.getText().toString().trim()))
+                {
+                    validate_phone();
+                }else
+                {
+                    if(provider.equals("password")){
+                        change_password();
+                    }else
+                    {
+                        saveTask(image);
+                    }
 
                 }
 
@@ -296,101 +336,12 @@ public class PerfilActivity extends AppCompatActivity implements
 
 
 
-                if(txtFecha.getText().toString().trim().equals("")){
+                /*if(txtFecha.getText().toString().trim().equals("")){
 
                     txtFecha.setError(getResources().getString(R.string.error_fecha));
                     return;
 
-                }
-
-
-
-                if(!txtpass.getText().toString().equals(""))
-                {
-                    if(txtnewpass.getText().toString().trim().length()<6)
-                    {
-                        txtnewpass.setError(getResources().getString(R.string.error_newpass));
-                        return;
-                    }
-                }else
-                {
-                    if(!txtnewpass.getText().toString().trim().equals("") && txtpass.getText().toString().equals("")){
-                        txtpass.setError(getResources().getString(R.string.error_pass));
-                        return;
-                    }
-
-                }
-
-
-                if(!txtpass.getText().toString().trim().equals("") && !txtnewpass.getText().toString().trim().equals(""))
-                {
-
-                    AuthCredential credential = EmailAuthProvider
-                            .getCredential(user.getEmail(), txtpass.getText().toString().trim());
-
-
-                    user.reauthenticate(credential)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        user.updatePassword(txtnewpass.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    Log.d(TAG, "Password updated");
-
-                                                    saveTask(image);
-
-
-                                                } else {
-
-                                                    pDialog = new SweetAlertDialog(PerfilActivity.this, SweetAlertDialog.ERROR_TYPE);
-                                                    pDialog.setTitleText(getResources().getString(R.string.app_name));
-                                                    pDialog.setContentText(getResources().getString(R.string.error_newpass_update));
-                                                    pDialog.setConfirmText(getResources().getString(R.string.ok));
-                                                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                                        @Override
-                                                        public void onClick(SweetAlertDialog sDialog) {
-                                                            sDialog.dismissWithAnimation();
-                                                            return;
-
-                                                        }
-                                                    });
-                                                    pDialog.show();
-
-                                                }
-                                            }
-                                        });
-                                    } else {
-                                        pDialog = new SweetAlertDialog(PerfilActivity.this, SweetAlertDialog.ERROR_TYPE);
-                                        pDialog.setTitleText(getResources().getString(R.string.app_name));
-                                        pDialog.setContentText(getResources().getString(R.string.error_newpass_update));
-                                        pDialog.setConfirmText(getResources().getString(R.string.ok));
-                                        pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                            @Override
-                                            public void onClick(SweetAlertDialog sDialog) {
-                                                sDialog.dismissWithAnimation();
-                                                return;
-
-                                            }
-                                        });
-                                        pDialog.show();
-                                    }
-                                }
-                            });
-
-
-                }else
-                {
-
-                    saveTask(image);
-
-
-                }
-
-
-
+                }*/
 
             }
         });
@@ -543,8 +494,22 @@ public class PerfilActivity extends AppCompatActivity implements
                                     public void run() {
                                         try {
 
-                                            txtNombres.setText(Constants.AESDecryptEntity(mObj.getString("nombres")));
-                                            txtApellidos.setText(Constants.AESDecryptEntity(mObj.getString("apellidos")));
+                                            String nombres = Constants.AESDecryptEntity(mObj.getString("nombres"));
+                                            String apellidos = Constants.AESDecryptEntity(mObj.getString("apellidos"));
+
+                                            txtNombres.setText(nombres);
+                                            txtApellidos.setText(apellidos);
+
+                                            if(nombres.trim().length()!=0)
+                                            {
+                                                txtNombres.setEnabled(false);
+                                            }
+
+                                            if(apellidos.trim().length()!=0)
+                                            {
+                                                txtApellidos.setEnabled(false);
+                                            }
+
                                             txtFecha.setText(Constants.AESDecryptEntity(mObj.getString("fecha_nacimiento")));
                                             txtIdentificacion.setText(Constants.AESDecryptEntity(mObj.getString("identificacion")));
 
@@ -794,25 +759,211 @@ public class PerfilActivity extends AppCompatActivity implements
 
     }
 
+    private void showEmail()
+    {
+        pDialog = new SweetAlertDialog(PerfilActivity.this, SweetAlertDialog.ERROR_TYPE);
+        pDialog.setTitleText(getResources().getString(R.string.app_name));
+        pDialog.setContentText(getResources().getString(R.string.update_email));
+        pDialog.setConfirmText(getResources().getString(R.string.ok));
+        pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sDialog) {
+                sDialog.dismissWithAnimation();
+                return;
 
+            }
+        });
+        pDialog.show();
+    }
 
-    private void saveTask(final String image){
-        //Showing the progress dialog
+    private void change_email()
+    {
 
-
-        /*if(!telefono.equals(txttelefono.getText().toString().trim()))
+        if(!user.getEmail().equals(txtemail.getText().toString().trim()))
         {
 
-            fragment.setVisibility(View.VISIBLE);
+            if(txtpass.getText().toString().trim().length()==0)
+            {
+                pDialog = new SweetAlertDialog(PerfilActivity.this, SweetAlertDialog.ERROR_TYPE);
+                pDialog.setTitleText(getResources().getString(R.string.app_name));
+                pDialog.setContentText(getResources().getString(R.string.error_need_pass));
+                pDialog.setConfirmText(getResources().getString(R.string.ok));
+                pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        sDialog.dismissWithAnimation();
+                        return;
+
+                    }
+                });
+                pDialog.show();
+            }else
+            {
+                AuthCredential credential = EmailAuthProvider
+                        .getCredential(user.getEmail(), txtpass.getText().toString().trim());
+
+
+                user.reauthenticate(credential)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+
+
+                                    user.updateEmail(txtemail.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+
+
+
+                                            if (task.isSuccessful()) {
+                                                Log.d(TAG, "Password updated");
+                                                changeEmail=true;
+                                                saveTask(image);
+                                            } else {
+
+                                                pDialog = new SweetAlertDialog(PerfilActivity.this, SweetAlertDialog.ERROR_TYPE);
+                                                pDialog.setTitleText(getResources().getString(R.string.app_name));
+                                                pDialog.setContentText(getResources().getString(R.string.error_change_email));
+                                                pDialog.setConfirmText(getResources().getString(R.string.ok));
+                                                pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                    @Override
+                                                    public void onClick(SweetAlertDialog sDialog) {
+                                                        sDialog.dismissWithAnimation();
+                                                        return;
+
+                                                    }
+                                                });
+                                                pDialog.show();
+
+                                            }
+
+
+                                        }
+                                    });
+                                } else {
+                                    pDialog = new SweetAlertDialog(PerfilActivity.this, SweetAlertDialog.ERROR_TYPE);
+                                    pDialog.setTitleText(getResources().getString(R.string.app_name));
+                                    pDialog.setContentText(getResources().getString(R.string.error_newpass_update));
+                                    pDialog.setConfirmText(getResources().getString(R.string.ok));
+                                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog.dismissWithAnimation();
+                                            return;
+
+                                        }
+                                    });
+                                    pDialog.show();
+                                }
+                            }
+                        });
+            }
+
+
+        }else
+        {
+            saveTask(image);
+        }
+
+
+
+
+    }
+
+    private  void change_password()
+    {
+        if(!txtpass.getText().toString().trim().equals("") && !txtnewpass.getText().toString().trim().equals(""))
+        {
+
+            AuthCredential credential = EmailAuthProvider
+                    .getCredential(user.getEmail(), txtpass.getText().toString().trim());
+
+
+            user.reauthenticate(credential)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                user.updatePassword(txtnewpass.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Log.d(TAG, "Password updated");
+
+                                            saveTask(image);
+
+                                        } else {
+
+                                            pDialog = new SweetAlertDialog(PerfilActivity.this, SweetAlertDialog.ERROR_TYPE);
+                                            pDialog.setTitleText(getResources().getString(R.string.app_name));
+                                            pDialog.setContentText(getResources().getString(R.string.error_newpass_update));
+                                            pDialog.setConfirmText(getResources().getString(R.string.ok));
+                                            pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                @Override
+                                                public void onClick(SweetAlertDialog sDialog) {
+                                                    sDialog.dismissWithAnimation();
+                                                    return;
+
+                                                }
+                                            });
+                                            pDialog.show();
+
+                                        }
+                                    }
+                                });
+                            } else {
+                                pDialog = new SweetAlertDialog(PerfilActivity.this, SweetAlertDialog.ERROR_TYPE);
+                                pDialog.setTitleText(getResources().getString(R.string.app_name));
+                                pDialog.setContentText(getResources().getString(R.string.error_newpass_update));
+                                pDialog.setConfirmText(getResources().getString(R.string.ok));
+                                pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sDialog) {
+                                        sDialog.dismissWithAnimation();
+                                        return;
+
+                                    }
+                                });
+                                pDialog.show();
+                            }
+                        }
+                    });
+
+
+        }else
+        {
+
+            saveTask(image);
+
+
+        }
+    }
+
+
+    private void validate_phone()
+    {
+        String num= txttelefono.getText().toString().trim();
+        num= Constants.PREFIJO_PHONE +num.substring(1);
+
+
+        pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+        pDialog.getProgressHelper().setBarColor(Color.parseColor(getString(R.string.colorAccent)));
+        pDialog.setTitleText(getResources().getString(R.string.validate_num));
+        pDialog.setCancelable(false);
+        pDialog.show();
+
+            //fragment.setVisibility(View.VISIBLE);
 
             mCallBacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                 @Override
                 public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
                     Log.d("JEJE", "onVerificationCompleted:" + phoneAuthCredential);
+                    pDialog.dismiss();
 
+                    telefono=txttelefono.getText().toString().trim();
 
-                    fragment.setVisibility(View.GONE);
-
+                    change_password();
 
                 }
 
@@ -824,19 +975,64 @@ public class PerfilActivity extends AppCompatActivity implements
                     } else if (e instanceof FirebaseTooManyRequestsException) {
                         Log.d("JEJE", "Too many Request");
                     }
+                    pDialog.dismiss();
+
+                    pDialog = new SweetAlertDialog(PerfilActivity.this, SweetAlertDialog.ERROR_TYPE);
+                    pDialog.setTitleText(getResources().getString(R.string.app_name));
+                    pDialog.setContentText(getResources().getString(R.string.error_validate_num));
+                    pDialog.setConfirmText(getResources().getString(R.string.ok));
+                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+
+                        }
+                    });
+                    pDialog.show();
+
                 }
                 @Override
                 public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                     super.onCodeSent(s, forceResendingToken);
                     Log.d("JEJE", "onCodeSent:" + s);
-                    //mResendToken = forceResendingToken;
                     loadVerification(s, txttelefono.getText().toString().trim());
                 }
+
+                @Override
+                public void onCodeAutoRetrievalTimeOut(String s)
+                {
+                    pDialog.dismiss();
+
+                    pDialog = new SweetAlertDialog(PerfilActivity.this, SweetAlertDialog.ERROR_TYPE);
+                    pDialog.setTitleText(getResources().getString(R.string.app_name));
+                    pDialog.setContentText(getResources().getString(R.string.error_validate_num));
+                    pDialog.setConfirmText(getResources().getString(R.string.ok));
+                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+
+                        }
+                    });
+                    pDialog.show();
+                }
+
+
+
+
+
+
             };
 
 
-            verifyPhone("+593985086078",mCallBacks);
-        }*/
+            verifyPhone(num,mCallBacks);
+
+    }
+
+
+
+    private void saveTask(final String image){
+        //Showing the progress dialog
 
 
         pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
@@ -881,7 +1077,9 @@ public class PerfilActivity extends AppCompatActivity implements
                                     @Override
                                     public void onClick(SweetAlertDialog sDialog) {
                                         sDialog.dismissWithAnimation();
+
                                         finish();
+
                                     }
                                 });
                                 pDialog.show();
@@ -955,7 +1153,7 @@ public class PerfilActivity extends AppCompatActivity implements
                     params.put("nombres", Constants.AESEncryptEntity(txtNombres.getText().toString()));
                     params.put("apellidos", Constants.AESEncryptEntity(txtApellidos.getText().toString()));
                     //params.put("identificacion", Constants.AESEncryptEntity(txtIdentificacion.getText().toString()));
-                    params.put("fecha_nacimiento", Constants.AESEncryptEntity(txtFecha.getText().toString()));
+                    //params.put("fecha_nacimiento", Constants.AESEncryptEntity(txtFecha.getText().toString()));
                     params.put("telefono", Constants.AESEncryptEntity(txttelefono.getText().toString()));
 
                     //params.put("tipo_identificacion", Constants.AESEncryptEntity(tipo_identificacion));
@@ -985,17 +1183,12 @@ public class PerfilActivity extends AppCompatActivity implements
         volleyQueue = new RequestQueue(cache, new BasicNetwork(new HurlStack()));
         volleyQueue.start();
 
-
-
-
-
-
     }
 
     public void verifyPhone(String phoneNumber, PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks){
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,        // Phone number to verify
-                60,                 // Timeout duration
+                45,                 // Timeout duration
                 TimeUnit.SECONDS,   // Unit of timeout
                 this,               // Activity (for callback binding)
                 mCallbacks);        // OnVerificationStateChangedCallback

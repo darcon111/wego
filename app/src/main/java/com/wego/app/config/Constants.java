@@ -72,6 +72,10 @@ public class Constants {
     private static final String PATTERN_EMAIL = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
+    private static final String PATTERN_PHONE = "^\\+[0-9]{10}$";
+
+    public static final String PREFIJO_PHONE="+593";
+
   /*get type conetions*/
     public static String getNetworkClass(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -115,6 +119,22 @@ public class Constants {
         // Match the given input against this pattern
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
+
+    }
+
+    public static boolean validatPhone(String phone) {
+        // Compiles the given regular expression into a pattern.
+        /*Pattern pattern = Pattern.compile(PATTERN_PHONE);
+        // Match the given input against this pattern
+        Matcher matcher = pattern.matcher(phone);
+        return matcher.matches();*/
+
+
+        if (phone == null || phone.length() < 10 || phone.length() > 10) {
+            return false;
+        } else {
+            return android.util.Patterns.PHONE.matcher(phone).matches();
+        }
 
     }
 
