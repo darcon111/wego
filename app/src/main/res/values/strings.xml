@@ -70,6 +70,9 @@
     <string name="error_need_pass">Para cambiar el email necesita el password</string>
     <string name="update_email">Valide nuevamente su email</string>
     <string name="error_validate_num">Error al validar número</string>
+    <string name="txtrespt">Responsabilidades del trabajador</string>
+    <string name="txtrespc">Responsabilidades Cliente</string>
+    <string name="obtener">Obtener</string>
 
     <string name="colorAccent">#d11313</string>
 

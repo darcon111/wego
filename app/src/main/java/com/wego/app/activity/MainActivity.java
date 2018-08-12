@@ -69,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle mDrawerToggle;
 
     private int PROFILE = R.drawable.ic_user;
-    private RecyclerView.Adapter mAdapter;
+    //private RecyclerView.Adapter mAdapter;
+    private MenuAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private DrawerLayout Drawer;
     private String TAG = MainActivity.class.getName();
@@ -158,15 +159,14 @@ public class MainActivity extends AppCompatActivity {
 
         validaTask(user.getEmail());
 
+        menu();
+
 
     }
 
     public void menu()
     {
 
-        if(appPreferences.getActualizar().equals("1")) {
-
-            appPreferences.setActualizar("0");
 
             mAdapter = new MenuAdapter(TITLES, ICONS, appPreferences.getUser(), PROFILE, appPreferences.getImagen(), MainActivity.this);       // Creating the Adapter of MyAdapter class(which we are going to see in a bit)
 
@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }));
         }
-    }
+
 
 
     //sign out method
@@ -334,12 +334,12 @@ public class MainActivity extends AppCompatActivity {
 
                                     mObj = mObjResp[0].getJSONObject(2);
 
-                                    if(!appPreferences.getUser().equals(Constants.AESDecryptEntity(mObj.getString("nombres"))))
-                                    {
+                                    //if(!appPreferences.getUser().equals(Constants.AESDecryptEntity(mObj.getString("nombres"))))
+                                    //{
                                         appPreferences.setUser(Constants.AESDecryptEntity(mObj.getString("nombres")));
-                                        appPreferences.setActualizar("1");
-                                        menu();
-                                    }
+                                        //appPreferences.setActualizar("1");
+
+                                    //}
 
 
                                     for (int x = 3; x< mObjResp[0].length(); x++)
@@ -574,7 +574,16 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        menu();
+
+
+        if(appPreferences.getActualizar().equals("1")){
+
+            mAdapter.setName(appPreferences.getUser());
+            mAdapter.notifyItemChanged(0);
+            appPreferences.setActualizar("0");
+        }
+
+
 
 
     }

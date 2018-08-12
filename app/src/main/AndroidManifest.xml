@@ -69,7 +69,8 @@
 
         <activity android:name=".activity.RegistroActivity" />
         <activity android:name=".activity.PerfilActivity" />
-        <activity android:name=".activity.ServiciesActivity"></activity>
+        <activity android:name=".activity.ServiciesActivity" />
+        <activity android:name=".activity.ServiciesCaractActivity"></activity>
     </application>
 
 </manifest>

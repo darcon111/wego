@@ -95,6 +95,8 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
 
 
+
+
     //Below first we ovverride the method onCreateViewHolder which is called when the ViewHolder is
     //Created, In this method we inflate the item_row.xml layout if the viewType is Type_ITEM or else we inflate header.xml
     // if the viewType is TYPE_HEADER
@@ -187,6 +189,16 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
     private boolean isPositionHeader(int position) {
         return position == 0;
+    }
+
+    public void setName(String Name){
+
+        name = Name;
+
+    }
+    public void setImagen(String imagen)
+    {
+        imagen_url = imagen;
     }
 
 }
