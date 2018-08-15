@@ -463,6 +463,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
                             } else {
+                                pDialog.dismiss();
                                 insertUser("");
                                 databaseUsers.removeEventListener(listen);
 
@@ -493,7 +494,7 @@ public class LoginActivity extends AppCompatActivity {
         {
             for(int i=0;i<mListUser.size();i++)
             {
-                if(mListUser.get(i).getFirebaseId().equals(user.getUid()))
+                if(mListUser.get(i).getEmail().equals(user.getEmail()))
                 {
                     Utemp=mListUser.get(i);
                 }
@@ -821,7 +822,7 @@ public class LoginActivity extends AppCompatActivity {
         pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(Color.parseColor(getString(R.string.colorAccent)));
         pDialog.setTitleText(getResources().getString(R.string.auth));
-        pDialog.setCancelable(true);
+        pDialog.setCancelable(false);
         pDialog.show();
 
 

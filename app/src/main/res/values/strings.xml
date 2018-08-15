@@ -2,7 +2,7 @@
     <string name="app_name">Wego</string>
     <string name="firebase_url">https://pictograma-b8ac7.firebaseio.com</string>
     <string name="facebook_app_id">289545565182154</string>
-	<string name="fb_login_protocol_scheme">fb289545565182154</string>
+    <string name="fb_login_protocol_scheme">fb289545565182154</string>
     <string name="help">Ayuda</string>
     <string name="config">Configuración</string>
     <string name="share">Compartir</string>
@@ -75,6 +75,6 @@
     <string name="txtrespc">Responsabilidades Cliente</string>
     <string name="obtener">Obtener</string>
 
-    <string name="colorAccent">#d11313</string>
+    <string name="colorAccent">#FF5252</string>
 
 </resources>
