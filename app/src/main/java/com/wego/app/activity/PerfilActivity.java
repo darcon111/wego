@@ -32,6 +32,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -191,6 +192,10 @@ public class PerfilActivity extends AppCompatActivity implements
 
         /* toolbar*/
         toolbar = (Toolbar) findViewById(R.id.toolbaruser);
+
+        TextView title = (TextView) findViewById(R.id.txtTitle);
+
+        title.setText(getString(R.string.perfil));
 
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();

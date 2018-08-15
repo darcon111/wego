@@ -1,9 +1,6 @@
 package com.wego.app.activity;
 
-import android.app.ProgressDialog;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,12 +23,12 @@ import com.wego.app.config.Constants;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
-public class RegistroActivity extends AppCompatActivity {
+public class RegistryActivity extends AppCompatActivity {
 
     private EditText txtEmail,txtPass;
     private static AppPreferences app;
     private FirebaseAuth mAuth;
-    private static final String TAG = RegistroActivity.class.getSimpleName();
+    private static final String TAG = RegistryActivity.class.getSimpleName();
     private SweetAlertDialog pDialog;
 
     @Override
@@ -141,7 +138,7 @@ public class RegistroActivity extends AppCompatActivity {
                                     pDialog.dismiss();
 
 
-                                    pDialog =new SweetAlertDialog(RegistroActivity.this, SweetAlertDialog.ERROR_TYPE);
+                                    pDialog =new SweetAlertDialog(RegistryActivity.this, SweetAlertDialog.ERROR_TYPE);
                                     pDialog.setTitleText(getResources().getString(R.string.app_name));
                                     pDialog.setContentText(getResources().getString(R.string.error_user));
                                     pDialog.setConfirmText(getResources().getString(R.string.ok));
@@ -162,7 +159,7 @@ public class RegistroActivity extends AppCompatActivity {
                                 {
                                     pDialog.dismiss();
 
-                                    pDialog =new SweetAlertDialog(RegistroActivity.this, SweetAlertDialog.ERROR_TYPE);
+                                    pDialog =new SweetAlertDialog(RegistryActivity.this, SweetAlertDialog.ERROR_TYPE);
                                     pDialog.setTitleText(getResources().getString(R.string.app_name));
                                     pDialog.setContentText(getResources().getString(R.string.error_pass_debil));
                                     pDialog.setConfirmText(getResources().getString(R.string.ok));

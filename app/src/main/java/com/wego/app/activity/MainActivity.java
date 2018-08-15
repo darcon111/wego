@@ -100,6 +100,10 @@ public class MainActivity extends AppCompatActivity {
         /* toolbar*/
         toolbar = (Toolbar) findViewById(R.id.toolbaruser);
 
+        TextView title = (TextView) findViewById(R.id.txtTitle);
+
+        title.setText(getString(R.string.app_name));
+
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

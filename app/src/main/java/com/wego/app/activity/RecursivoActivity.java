@@ -1,7 +1,6 @@
 package com.wego.app.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
@@ -9,6 +8,7 @@ import android.os.Looper;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -19,7 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,14 +34,11 @@ import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.wego.app.R;
-import com.wego.app.config.AppPreferences;
 import com.wego.app.config.Constants;
-import com.wego.app.holder.Categories;
-import com.wego.app.holder.Servicies;
+import com.wego.app.holder.Serviciescarac;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,21 +52,22 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class ServiciesActivity extends AppCompatActivity {
+public class RecursivoActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private RecyclerView mServiciesRecyclerView;
     private String TAG = ServiciesActivity.class.getName();
-    private ArrayList<Servicies> mListServicies;
+    private ArrayList<Serviciescarac> mListServicies;
     private ServiciesRecycleAdapter mServiciesAdapter;
 
     private SweetAlertDialog pDialog;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_servicies);
-
+        setContentView(R.layout.activity_recursivo);
 
         /* set orientation*/
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
@@ -80,11 +78,7 @@ public class ServiciesActivity extends AppCompatActivity {
 
         /* toolbar*/
         toolbar = (Toolbar) findViewById(R.id.toolbaruser);
-
-        TextView title = (TextView) findViewById(R.id.txtTitle);
-
-        title.setText(getString(R.string.servicios));
-
+        toolbar.setTitle(getString(R.string.servicios_det));
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -97,22 +91,20 @@ public class ServiciesActivity extends AppCompatActivity {
 
         mServiciesRecyclerView = (RecyclerView) findViewById(R.id.servicies);
 
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, 1);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, 1);
 
         mServiciesRecyclerView.setLayoutManager(layoutManager);
         mServiciesAdapter = new ServiciesRecycleAdapter();
         mServiciesRecyclerView.setAdapter(mServiciesAdapter);
 
-        mListServicies = new ArrayList<Servicies>();
+        mListServicies = new ArrayList<Serviciescarac>();
 
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
-            loadTask(extras.getString("categoria"));
+            mListServicies.clear();
+            loadTask(extras.getString("servicio_id"));
         }
-
-
     }
-
 
     private void loadTask(String id){
         //Showing the progress dialog
@@ -122,10 +114,10 @@ public class ServiciesActivity extends AppCompatActivity {
         pDialog.setCancelable(true);
         pDialog.show();
 
-        Constants.deleteCache(ServiciesActivity.this);
+        Constants.deleteCache(RecursivoActivity.this);
 
         final String finalid = id;
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"loadServicies/format/json",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"getServiciosRecur/format/json",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String responde) {
@@ -147,7 +139,8 @@ public class ServiciesActivity extends AppCompatActivity {
                                 final JSONArray mObjResp = res.getJSONArray("data");
                                 final JSONObject[] mObj = new JSONObject[1];
 
-
+                                mListServicies.clear();
+                                mServiciesAdapter.notifyDataSetChanged();
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -156,7 +149,7 @@ public class ServiciesActivity extends AppCompatActivity {
                                         {
                                             try {
                                                 mObj[0] = mObjResp.getJSONObject(x);
-                                                mListServicies.add(new Servicies(Integer.parseInt(Constants.AESDecryptEntity(mObj[0].getString("id"))),Constants.AESDecryptEntity(mObj[0].getString("nombre")),Constants.AESDecryptEntity(mObj[0].getString("descripcion")),Constants.AESDecryptEntity(mObj[0].getString("categoria")), mObj[0].getString("imagen")));
+                                                mListServicies.add(new Serviciescarac(Integer.parseInt(Constants.AESDecryptEntity(mObj[0].getString("id"))),Constants.AESDecryptEntity(mObj[0].getString("nombre")),Constants.AESDecryptEntity(mObj[0].getString("descripcion")),Constants.AESDecryptEntity(mObj[0].getString("respt")),Constants.AESDecryptEntity(mObj[0].getString("respc")),Constants.AESDecryptEntity(mObj[0].getString("costo")),Integer.parseInt(mObj[0].getString("ref"))));
                                                 mServiciesAdapter.notifyItemChanged(x);
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
@@ -183,7 +176,7 @@ public class ServiciesActivity extends AppCompatActivity {
                                 pDialog.dismiss();
 
 
-                                pDialog= new SweetAlertDialog(ServiciesActivity.this, SweetAlertDialog.ERROR_TYPE);
+                                pDialog= new SweetAlertDialog(RecursivoActivity.this, SweetAlertDialog.ERROR_TYPE);
                                 pDialog.setTitleText(getResources().getString(R.string.app_name));
                                 pDialog.setContentText(Constants.AESDecryptEntity(res.getString("message")));
                                 pDialog.setConfirmText(getResources().getString(R.string.ok));
@@ -226,7 +219,7 @@ public class ServiciesActivity extends AppCompatActivity {
 
                         //Showing toast
                         Log.d(TAG, volleyError.toString());
-                        Toast.makeText(ServiciesActivity.this, volleyError.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(RecursivoActivity.this, volleyError.toString(), Toast.LENGTH_LONG).show();
 
 
                     }
@@ -241,7 +234,7 @@ public class ServiciesActivity extends AppCompatActivity {
                 //Adding parameters
 
                 try {
-                    params.put("categoria", Constants.AESEncryptEntity(finalid));
+                    params.put("servicio_id", Constants.AESEncryptEntity(finalid));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -268,44 +261,62 @@ public class ServiciesActivity extends AppCompatActivity {
 
     }
 
-    /* adapter*/
-
     public class ServiciesRecycleAdapter extends RecyclerView.Adapter<ServiciesRecycleHolder> {
         private int lastPosition = -1;
 
-        @Override
-        public ServiciesRecycleHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
 
-            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_servicies, viewGroup, false);
+        @Override
+        public  ServiciesRecycleHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_servicies_carac_ref, viewGroup, false);
             setAnimation(v,i);
-            return new ServiciesRecycleHolder(v);
+            return new  ServiciesRecycleHolder(v);
         }
 
 
+
+
         @Override
-        public void onBindViewHolder(final ServiciesRecycleHolder productHolder, final int i) {
+        public void onBindViewHolder(final  ServiciesRecycleHolder productHolder, final int i) {
+
+
 
             productHolder.mTitle.setText(mListServicies.get(i).getNombre());
-
-            Glide.with(ServiciesActivity.this)
-                    .load(mListServicies.get(i).getImagen())
-                    .fitCenter()
-                    .into(productHolder.mImage);
+            productHolder.mTxtrespotd.setText(mListServicies.get(i).getRespt());
+            productHolder.mTxtrespcd.setText(mListServicies.get(i).getRespc());
+            productHolder.mTxtcosto.setText("Costo $" + mListServicies.get(i).getCosto());
 
 
-            productHolder.mImage.setOnClickListener(new View.OnClickListener() {
+            productHolder.mCard.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(ServiciesActivity.this,ServiciesCaractActivity.class);
-                    intent.putExtra("servicioid",String.valueOf(mListServicies.get(i).getId()));
-                    startActivity(intent);
+                    if(mListServicies.get(i).getRef_id()==0) {
+
+                        if (mListServicies.get(i).getView() == 0) {
+
+                            Animation slideUp = AnimationUtils.loadAnimation(RecursivoActivity.this, R.anim.fade_in);
+                            productHolder.mContenedor.setVisibility(View.VISIBLE);
+                            productHolder.mContenedor.startAnimation(slideUp);
+                            mListServicies.get(i).setView(1);
+                        } else {
+
+                            productHolder.mContenedor.setVisibility(View.GONE);
+
+                            mListServicies.get(i).setView(0);
+
+                        }
+                    }else
+                    {
+                        loadTask(String.valueOf(mListServicies.get(i).getId()));
+                    }
+
                 }
             });
 
 
-
             setAnimation(productHolder.itemView, i);
+
 
 
 
@@ -331,9 +342,9 @@ public class ServiciesActivity extends AppCompatActivity {
             if (position > lastPosition) {
                 Animation animation;
                 if (position % 2 == 0) {
-                    animation = AnimationUtils.loadAnimation(ServiciesActivity.this, R.anim.zoom_back_in);
+                    animation = AnimationUtils.loadAnimation(RecursivoActivity.this, R.anim.zoom_back_in);
                 } else {
-                    animation = AnimationUtils.loadAnimation(ServiciesActivity.this, R.anim.zoom_forward_in);
+                    animation = AnimationUtils.loadAnimation(RecursivoActivity.this, R.anim.zoom_forward_in);
                 }
 
                 viewToAnimate.startAnimation(animation);
@@ -344,18 +355,29 @@ public class ServiciesActivity extends AppCompatActivity {
 
     }
 
-    public class ServiciesRecycleHolder extends RecyclerView.ViewHolder {
+    public class  ServiciesRecycleHolder extends RecyclerView.ViewHolder {
         public TextView mTitle;
-        public ImageView mImage;
+        public TextView mTxtrespotd;
+        public TextView mTxtrespcd;
+        public TextView mTxtcosto;
+        public CardView mCard;
+        public LinearLayout mContenedor;
+
+
+
 
 
         public ServiciesRecycleHolder(View itemView) {
             super(itemView);
             mTitle = (TextView) itemView.findViewById(R.id.txttitle);
-            mImage = (ImageView) itemView.findViewById(R.id.imagen);
+            mTxtrespotd = (TextView) itemView.findViewById(R.id.txtrespotd);
+            mTxtrespcd = (TextView) itemView.findViewById(R.id.txtrespcd);
+            mTxtcosto = (TextView) itemView.findViewById(R.id.txtcosto);
+            mCard = (CardView) itemView.findViewById(R.id.card);
+            mContenedor = (LinearLayout) itemView.findViewById(R.id.contenedor);
+
         }
     }
-
 
     @Override
     public void onBackPressed() {
@@ -383,4 +405,6 @@ public class ServiciesActivity extends AppCompatActivity {
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
+
+
 }

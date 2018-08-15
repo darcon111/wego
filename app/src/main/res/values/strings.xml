@@ -74,6 +74,9 @@
     <string name="txtrespt">Responsabilidades del trabajador</string>
     <string name="txtrespc">Responsabilidades Cliente</string>
     <string name="obtener">Obtener</string>
+    <string name="servicios">Servicios</string>
+    <string name="servicios_det">Detalles del servicio</string>
+    <string name="perfil">Perfil</string>
 
     <string name="colorAccent">#FF5252</string>
 

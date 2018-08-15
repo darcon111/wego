@@ -3,6 +3,7 @@ package com.wego.app.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.opengl.Visibility;
 import android.os.Build;
@@ -85,6 +86,9 @@ public class ServiciesCaractActivity extends AppCompatActivity {
 
         /* toolbar*/
         toolbar = (Toolbar) findViewById(R.id.toolbaruser);
+        TextView title = (TextView) findViewById(R.id.txtTitle);
+
+        title.setText(getString(R.string.servicios_det));
 
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -157,7 +161,7 @@ public class ServiciesCaractActivity extends AppCompatActivity {
                                         {
                                             try {
                                                 mObj[0] = mObjResp.getJSONObject(x);
-                                                mListServicies.add(new Serviciescarac(Integer.parseInt(Constants.AESDecryptEntity(mObj[0].getString("id"))),Constants.AESDecryptEntity(mObj[0].getString("nombre")),Constants.AESDecryptEntity(mObj[0].getString("descripcion")),Constants.AESDecryptEntity(mObj[0].getString("respt")),Constants.AESDecryptEntity(mObj[0].getString("respc")),Constants.AESDecryptEntity(mObj[0].getString("costo")),Integer.parseInt(mObj[0].getString("ref")),0, mObj[0].getString("data")));
+                                                mListServicies.add(new Serviciescarac(Integer.parseInt(Constants.AESDecryptEntity(mObj[0].getString("id"))),Constants.AESDecryptEntity(mObj[0].getString("nombre")),Constants.AESDecryptEntity(mObj[0].getString("descripcion")),Constants.AESDecryptEntity(mObj[0].getString("respt")),Constants.AESDecryptEntity(mObj[0].getString("respc")),Constants.AESDecryptEntity(mObj[0].getString("costo")),Integer.parseInt(mObj[0].getString("ref"))));
                                                 mServiciesAdapter.notifyItemChanged(x);
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
@@ -309,9 +313,6 @@ public class ServiciesCaractActivity extends AppCompatActivity {
                                 mListServicies.get(i).setView(1);
                             } else {
 
-                                //Animation slideDown = AnimationUtils.loadAnimation(ServiciesCaractActivity.this, R.anim.slide_down);
-
-                                //productHolder.mContenedor.startAnimation(slideDown);
                                 productHolder.mContenedor.setVisibility(View.GONE);
 
                                 mListServicies.get(i).setView(0);
@@ -319,67 +320,11 @@ public class ServiciesCaractActivity extends AppCompatActivity {
                             }
                         }else
                         {
-                            if(productHolder.mServicies_ref.getVisibility()== View.VISIBLE)
-                            {
-                                productHolder.mServicies_ref.setVisibility(View.GONE);
-                            }else
-                            {
-                                productHolder.mProgress.setVisibility(View.VISIBLE);
 
+                            Intent intent = new Intent(ServiciesCaractActivity.this,RecursivoActivity.class);
+                            intent.putExtra("servicio_id",String.valueOf(mListServicies.get(i).getId()));
+                            startActivity(intent);
 
-
-                                final ServiciesRefRecycleAdapter mServiciesRefAdapter;
-                                StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, 1);
-
-                                productHolder.mServicies_ref.setLayoutManager(layoutManager);
-                                mServiciesRefAdapter = new ServiciesRefRecycleAdapter();
-                                productHolder.mServicies_ref.setAdapter(mServiciesRefAdapter);
-
-                                final ArrayList<Serviciescarac> mListServiciestemp= new ArrayList<Serviciescarac>();
-
-                                JSONArray mObjResp=null;
-                                try {
-                                    mObjResp = new JSONArray(mListServicies.get(i).getData().toString());
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                final JSONObject[] mObj = new JSONObject[1];
-
-
-                                final JSONArray finalMObjResp = mObjResp;
-
-                                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-
-                                        for (int x = 0; x< finalMObjResp.length(); x++)
-                                        {
-                                            try {
-                                                mObj[0] = finalMObjResp.getJSONObject(x);
-                                                mListServiciestemp.add(new Serviciescarac(Integer.parseInt(Constants.AESDecryptEntity(mObj[0].getString("id"))),Constants.AESDecryptEntity(mObj[0].getString("nombre")),Constants.AESDecryptEntity(mObj[0].getString("descripcion")),Constants.AESDecryptEntity(mObj[0].getString("respt")),Constants.AESDecryptEntity(mObj[0].getString("respc")),Constants.AESDecryptEntity(mObj[0].getString("costo")),1,0,"" ));
-
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-
-
-                                        }
-
-                                        mServiciesRefAdapter.setData(mListServiciestemp);
-                                        productHolder.mProgress.setVisibility(View.GONE);
-                                        productHolder.mServicies_ref.setVisibility(View.VISIBLE);
-                                        mServiciesRefAdapter.notifyDataSetChanged();
-
-
-
-
-                                    }
-                                });
-
-
-                            }
                         }
 
                     }
@@ -455,121 +400,7 @@ public class ServiciesCaractActivity extends AppCompatActivity {
 
 
 
-    public class ServiciesRefRecycleAdapter extends RecyclerView.Adapter< ServiciesRefRecycleHolder> {
-        private int lastPosition = -1;
-        private ArrayList<Serviciescarac> mListServiciestemp= new ArrayList<Serviciescarac>();
 
-        @Override
-        public  ServiciesRefRecycleHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-
-            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_servicies_carac_ref, viewGroup, false);
-            setAnimation(v,i);
-            return new  ServiciesRefRecycleHolder(v);
-        }
-
-        public void setData(ArrayList<Serviciescarac> data)
-        {
-            mListServiciestemp= data;
-        }
-
-
-        @Override
-        public void onBindViewHolder(final  ServiciesRefRecycleHolder productHolder, final int i) {
-
-
-
-                productHolder.mTitle.setText(mListServiciestemp.get(i).getNombre());
-                productHolder.mTxtrespotd.setText(mListServiciestemp.get(i).getRespt());
-                productHolder.mTxtrespcd.setText(mListServiciestemp.get(i).getRespc());
-                productHolder.mTxtcosto.setText("Costo $" + mListServiciestemp.get(i).getCosto());
-
-
-                productHolder.mCard.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (mListServiciestemp.get(i).getView() == 0) {
-
-                            Animation slideUp = AnimationUtils.loadAnimation(ServiciesCaractActivity.this, R.anim.fade_in);
-                            productHolder.mContenedor.setVisibility(View.VISIBLE);
-                            productHolder.mContenedor.startAnimation(slideUp);
-                            mListServiciestemp.get(i).setView(1);
-                        } else {
-
-                            //Animation slideDown = AnimationUtils.loadAnimation(ServiciesCaractActivity.this, R.anim.slide_down);
-
-                            //productHolder.mContenedor.startAnimation(slideDown);
-                            productHolder.mContenedor.setVisibility(View.GONE);
-
-                            mListServiciestemp.get(i).setView(0);
-
-                        }
-                    }
-                });
-
-
-                setAnimation(productHolder.itemView, i);
-
-
-
-
-        }
-
-
-        @Override
-        public int getItemCount() {
-            return mListServiciestemp.size();
-        }
-
-        public void removeItem(int position) {
-            mListServicies.remove(position);
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(position, mListServicies.size());
-            //Signal.get().reset();
-
-
-        }
-
-        private void setAnimation(View viewToAnimate, int position) {
-            // If the bound view wasn't previously displayed on screen, it's animated
-            if (position > lastPosition) {
-                Animation animation;
-                if (position % 2 == 0) {
-                    animation = AnimationUtils.loadAnimation(ServiciesCaractActivity.this, R.anim.zoom_back_in);
-                } else {
-                    animation = AnimationUtils.loadAnimation(ServiciesCaractActivity.this, R.anim.zoom_forward_in);
-                }
-
-                viewToAnimate.startAnimation(animation);
-                lastPosition = position;
-            }
-        }
-
-
-    }
-
-    public class  ServiciesRefRecycleHolder extends RecyclerView.ViewHolder {
-        public TextView mTitle;
-        public TextView mTxtrespotd;
-        public TextView mTxtrespcd;
-        public TextView mTxtcosto;
-        public CardView mCard;
-        public LinearLayout mContenedor;
-
-
-
-
-
-        public ServiciesRefRecycleHolder(View itemView) {
-            super(itemView);
-            mTitle = (TextView) itemView.findViewById(R.id.txttitle);
-            mTxtrespotd = (TextView) itemView.findViewById(R.id.txtrespotd);
-            mTxtrespcd = (TextView) itemView.findViewById(R.id.txtrespcd);
-            mTxtcosto = (TextView) itemView.findViewById(R.id.txtcosto);
-            mCard = (CardView) itemView.findViewById(R.id.card);
-            mContenedor = (LinearLayout) itemView.findViewById(R.id.contenedor);
-
-        }
-    }
 
     @Override
     public void onBackPressed() {
@@ -598,22 +429,5 @@ public class ServiciesCaractActivity extends AppCompatActivity {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
-    /*private ArrayList<Serviciescarac> getServicios(int servicioRef)
-    {
-
-        ArrayList<Serviciescarac> mListServiciestemp = new ArrayList<Serviciescarac>();
-
-        for (int x=0;x<mListServicies.size();x++)
-        {
-
-            if(mListServicies.get(x).getRef_id()==servicioRef)
-            {
-                mListServiciestemp.add(mListServicies.get(x));
-            }
-
-        }
-
-            return mListServiciestemp;
-    }*/
 
 }

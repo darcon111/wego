@@ -67,10 +67,12 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".activity.RegistroActivity" />
+        <activity android:name=".activity.RegistryActivity" />
         <activity android:name=".activity.PerfilActivity" />
         <activity android:name=".activity.ServiciesActivity" />
         <activity android:name=".activity.ServiciesCaractActivity" />
+        <activity android:name=".activity.RecursivoActivity" />
+        <activity android:name=".activity.GetServiciesActivity"></activity>
     </application>
 
 </manifest>

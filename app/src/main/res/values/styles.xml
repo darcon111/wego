@@ -103,10 +103,10 @@
     <style name="title" parent="android:Widget.TextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:typeface">sans</item>
-        <item name="android:textColor">@color/colorDivider</item>
+        <item name="android:textColor">@color/colorIcons</item>
         <item name="android:padding">3dp</item>
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
         <item name="android:layout_alignParentLeft">true</item>

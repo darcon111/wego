@@ -2,7 +2,6 @@ package com.wego.app.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -957,7 +956,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void registrar(View v)
     {
-        Intent intent = new Intent(LoginActivity.this, RegistroActivity.class);
+        Intent intent = new Intent(LoginActivity.this, RegistryActivity.class);
         startActivity(intent);
 
     }
