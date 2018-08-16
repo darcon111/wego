@@ -77,6 +77,17 @@
     <string name="servicios">Servicios</string>
     <string name="servicios_det">Detalles del servicio</string>
     <string name="perfil">Perfil</string>
+    <string name="horario">Horario de Visita</string>
+    <string name="dia">Día de Vísita</string>
+    <string name="hora">Hora de Vísita</string>
+    <string name="continuar">Continuar</string>
+    <string name="rango">Rango:</string>
+    <string name="ubicacion">Nombre Ubicación</string>
+    <string name="contacto">Nombre Contacto</string>
+    <string name="foto">Fotos</string>
+    <string name="miservicio">Mis Servicios</string>
+    <string name="miubicaciones">Mis Ubicaciones</string>
+    <string name="micontactos">Mis Conctatos</string>
 
     <string name="colorAccent">#FF5252</string>
 

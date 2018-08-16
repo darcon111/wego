@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorIcons"
-    tools:context=".activity.GetServiciesActivity">
+    tools:context=".activity.GetServicies2Activity">
 
 
     <android.support.v7.widget.Toolbar
@@ -69,33 +69,46 @@
             android:layout_marginTop="10dp"
             android:text="@string/dia" />
 
-        <EditText
-            android:id="@+id/txtdia"
-            style="@style/editText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:ems="10"
-            android:inputType="date" />
-
         <TextView
-            android:id="@+id/textView6"
+            android:id="@+id/textView7"
             style="@style/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
-            android:text="@string/hora" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rango" />
 
-        <com.wego.app.clases.Spinner.MaterialSpinner
-            android:id="@+id/horario"
-            style="@style/editText"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:spinnerMode="dialog" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btnUbicacion"
+                style="@style/button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button2"
+                android:text="@string/ubicacion" />
+
+            <Button
+                android:id="@+id/btnConctato"
+                style="@style/button"
+                android:background="@drawable/button2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/contacto" />
+
+            <Button
+                android:id="@+id/btnFotos"
+                style="@style/button"
+                android:background="@drawable/button2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/foto"
+                 />
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout

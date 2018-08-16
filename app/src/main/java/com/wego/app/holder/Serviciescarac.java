@@ -11,6 +11,7 @@ public class Serviciescarac {
     private String costo;
     private int ref_id;
     private int view=0;
+    private int servicio_id;
 
     public int getId() {
         return id;
@@ -76,8 +77,15 @@ public class Serviciescarac {
         this.ref_id = ref_id;
     }
 
+    public int getServicio_id() {
+        return servicio_id;
+    }
 
-    public Serviciescarac(int id, String nombre, String descripcion, String respt, String respc, String costo, int ref_id) {
+    public void setServicio_id(int servicio_id) {
+        this.servicio_id = servicio_id;
+    }
+
+    public Serviciescarac(int id, String nombre, String descripcion, String respt, String respc, String costo, int ref_id, int servicio_id) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -85,5 +93,6 @@ public class Serviciescarac {
         this.respc = respc;
         this.costo = costo;
         this.ref_id = ref_id;
+        this.servicio_id = servicio_id;
     }
 }

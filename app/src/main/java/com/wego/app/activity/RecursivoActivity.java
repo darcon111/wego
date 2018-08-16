@@ -149,7 +149,7 @@ public class RecursivoActivity extends AppCompatActivity {
                                         {
                                             try {
                                                 mObj[0] = mObjResp.getJSONObject(x);
-                                                mListServicies.add(new Serviciescarac(Integer.parseInt(Constants.AESDecryptEntity(mObj[0].getString("id"))),Constants.AESDecryptEntity(mObj[0].getString("nombre")),Constants.AESDecryptEntity(mObj[0].getString("descripcion")),Constants.AESDecryptEntity(mObj[0].getString("respt")),Constants.AESDecryptEntity(mObj[0].getString("respc")),Constants.AESDecryptEntity(mObj[0].getString("costo")),Integer.parseInt(mObj[0].getString("ref"))));
+                                                //mListServicies.add(new Serviciescarac(Integer.parseInt(Constants.AESDecryptEntity(mObj[0].getString("id"))),Constants.AESDecryptEntity(mObj[0].getString("nombre")),Constants.AESDecryptEntity(mObj[0].getString("descripcion")),Constants.AESDecryptEntity(mObj[0].getString("respt")),Constants.AESDecryptEntity(mObj[0].getString("respc")),Constants.AESDecryptEntity(mObj[0].getString("costo")),Integer.parseInt(mObj[0].getString("ref"))));
                                                 mServiciesAdapter.notifyItemChanged(x);
                                             } catch (JSONException e) {
                                                 e.printStackTrace();

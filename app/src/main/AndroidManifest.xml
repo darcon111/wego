@@ -72,7 +72,8 @@
         <activity android:name=".activity.ServiciesActivity" />
         <activity android:name=".activity.ServiciesCaractActivity" />
         <activity android:name=".activity.RecursivoActivity" />
-        <activity android:name=".activity.GetServiciesActivity"></activity>
+        <activity android:name=".activity.GetServiciesActivity" />
+        <activity android:name=".activity.GetServicies2Activity"></activity>
     </application>
 
 </manifest>

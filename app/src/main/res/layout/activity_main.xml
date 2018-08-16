@@ -27,7 +27,7 @@
                 android:id="@+id/toolbaruser"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:background="@color/colorPrimaryDark"
+                android:background="@color/colorPrimary"
                 app:layout_collapseMode="pin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

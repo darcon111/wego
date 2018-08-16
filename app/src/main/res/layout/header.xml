@@ -57,7 +57,7 @@
                     android:layout_marginLeft="16dp"
                     android:text="Akash Bangad"
                     android:textAlignment="textStart"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/colorPrimaryText"
                     android:textSize="24sp"
 
                     android:textStyle="bold" />
@@ -69,8 +69,9 @@
                     android:layout_marginLeft="16dp"
                     android:layout_weight="1"
                     android:text="Editar Perfil"
-                    android:textColor="@color/colorIcons"
-                    android:textSize="14sp" />
+                    android:textColor="@color/colorSecondaryText"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 

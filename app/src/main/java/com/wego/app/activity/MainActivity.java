@@ -121,16 +121,16 @@ public class MainActivity extends AppCompatActivity {
 
         /* menu main*/
         TITLES[0] = getString(R.string.help);
-        TITLES[1] = getString(R.string.config);
-        TITLES[2] = getString(R.string.share);
-        TITLES[3] = getString(R.string.terms);
+        TITLES[1] = getString(R.string.miservicio);
+        TITLES[2] = getString(R.string.miubicaciones);
+        TITLES[3] = getString(R.string.micontactos);
         TITLES[4] = getString(R.string.condition);
         TITLES[5] = getString(R.string.exit);
 
         ICONS[0] = R.drawable.ic_help;
-        ICONS[1] = R.drawable.ic_config;
-        ICONS[2] = R.drawable.ic_share;
-        ICONS[3] = R.drawable.ic_terms;
+        ICONS[1] = R.drawable.ic_build;
+        ICONS[2] = R.drawable.ic_location;
+        ICONS[3] = R.drawable.ic_conta;
         ICONS[4] = R.drawable.ic_condition;
         ICONS[5] = R.drawable.ic_exit;
 
