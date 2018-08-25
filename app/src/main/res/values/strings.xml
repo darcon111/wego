@@ -88,6 +88,14 @@
     <string name="miservicio">Mis Servicios</string>
     <string name="miubicaciones">Mis Ubicaciones</string>
     <string name="micontactos">Mis Conctatos</string>
+    <string name="miubicacion">Buscar ubicación</string>
+    <string name="gps">Por favor habilite el gps</string>
+    <string name="error_location">Ubicación no encontrada</string>
+    <string name="ubicacionvisita">Ubicación de la visita</string>
+    <string name="edificio">Vives en un edificio?</string>
+    <string name="piso">Piso</string>
+    <string name="departamento"># Departamento</string>
+    <string name="selectimagen">Seleccione imagenes</string>
 
     <string name="colorAccent">#FF5252</string>
 

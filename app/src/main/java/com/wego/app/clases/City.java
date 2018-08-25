@@ -1,13 +1,13 @@
 package com.wego.app.clases;
 
-public class Ciudad {
+public class City {
 
 
     private int id;
     private String name;
 
 
-    public Ciudad(int id, String name) {
+    public City(int id, String name) {
         this.id = id;
         this.name = name;
     }

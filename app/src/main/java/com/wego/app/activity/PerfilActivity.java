@@ -1,8 +1,6 @@
 package com.wego.app.activity;
 
 import android.annotation.SuppressLint;
-import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -31,7 +29,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,7 +43,6 @@ import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.GifRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -60,13 +56,12 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
-import com.google.firebase.auth.UserInfo;
 import com.vansuita.pickimage.bean.PickResult;
 import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wego.app.R;
-import com.wego.app.clases.Ciudad;
+import com.wego.app.clases.City;
 import com.wego.app.clases.EstadoCivil;
 import com.wego.app.clases.Identificacion;
 import com.wego.app.clases.ImagenCircular.CircleImageView;
@@ -93,7 +88,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.vansuita.pickimage.listeners.IPickResult;
-import com.wego.app.holder.Categories;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -136,7 +130,7 @@ public class PerfilActivity extends AppCompatActivity implements
 
 
     private ArrayList<EstadoCivil> arrayEstadoCivil;
-    private ArrayList<Ciudad> arrayCiudad;
+    private ArrayList<City> arrayCity;
     private ArrayList<Identificacion> arrayIdentificacion;
 
     private int select_tipo_identificacion=0;
@@ -639,13 +633,13 @@ public class PerfilActivity extends AppCompatActivity implements
 
                                             JSONArray list3 = new JSONArray(mObj.getString("list_ciudad"));
                                             list_cuidad = new ArrayList<String>();
-                                            arrayCiudad = new ArrayList<Ciudad>();
+                                            arrayCity = new ArrayList<City>();
                                             for (int x=0;x<list3.length();x++)
                                             {
                                                 JSONObject temp = list3.getJSONObject(x);
 
                                                 list_cuidad.add(Constants.AESDecryptEntity(temp.getString("nombre")));
-                                                arrayCiudad.add(new Ciudad(Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))),Constants.AESDecryptEntity(temp.getString("nombre"))));
+                                                arrayCity.add(new City(Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))),Constants.AESDecryptEntity(temp.getString("nombre"))));
 
                                                 if (Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))) == select_ciudad)
                                                 {
