@@ -107,7 +107,7 @@ public class MyLocationsActivity extends AppCompatActivity {
         if (!gps.canGetLocation()) {
             gps.showSettingsAlert();
         }
-        gps.city();
+        //gps.city();
 
         lat=String.valueOf(gps.getLatitude());
         log=String.valueOf(gps.getLongitude());
@@ -232,7 +232,7 @@ public class MyLocationsActivity extends AppCompatActivity {
         map.moveCamera(CameraUpdateFactory.newLatLng(posicion));
 
         // Move the camera instantly to Sydney with a zoom of 15.
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(posicion, 15));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(posicion, 20));
 
         // Zoom in, animating the camera.
         map.animateCamera(CameraUpdateFactory.zoomIn());
@@ -243,7 +243,7 @@ public class MyLocationsActivity extends AppCompatActivity {
         // Construct a CameraPosition focusing on Mountain View and animate the camera to that position.
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(posicion)      // Sets the center of the map to Mountain View
-                .zoom(17)                   // Sets the zoom
+                .zoom(10)                   // Sets the zoom
                 .bearing(90)                // Sets the orientation of the camera to east
                 .tilt(30)                   // Sets the tilt of the camera to 30 degrees
                 .build();                   // Creates a CameraPosition from the builder
