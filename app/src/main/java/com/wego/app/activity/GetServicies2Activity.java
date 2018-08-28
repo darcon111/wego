@@ -15,8 +15,6 @@ import android.widget.TextView;
 import com.wego.app.R;
 import com.wego.app.config.AppPreferences;
 
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class GetServicies2Activity extends AppCompatActivity {
 
@@ -31,11 +29,6 @@ public class GetServicies2Activity extends AppCompatActivity {
         setContentView(R.layout.activity_get_servicies2);
 
         /* set orientation*/
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/RobotoLight.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
 
         appPreferences = new AppPreferences(GetServicies2Activity.this);
 
@@ -118,8 +111,5 @@ public class GetServicies2Activity extends AppCompatActivity {
 
 
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
+
 }

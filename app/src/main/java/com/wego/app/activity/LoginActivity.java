@@ -41,6 +41,8 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
@@ -78,8 +80,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 import io.fabric.sdk.android.Fabric;
 
 public class LoginActivity extends AppCompatActivity {
@@ -109,17 +110,17 @@ public class LoginActivity extends AppCompatActivity {
 
     private SweetAlertDialog pDialog;
 
+    //data facebook
+    private String appname="",applastname="";
+    private String appbirthday="",appgenero="1";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
 
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/RobotoLight.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
+
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 
@@ -167,8 +168,9 @@ public class LoginActivity extends AppCompatActivity {
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
         loginFacebook = (LoginButton) findViewById(R.id.button_facebook_login);
-        loginFacebook.setReadPermissions("email", "public_profile");
-        loginFacebook.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+        loginFacebook.setReadPermissions("email", "public_profile","user_friends","user_birthday");
+
+        /*loginFacebook.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
@@ -186,7 +188,7 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(TAG, "facebook:onError", error);
                 // ...
             }
-        });
+        });*/
 
         btnFacebook = (Button) findViewById(R.id.btnfacebook);
         btnFacebook.setOnClickListener(new View.OnClickListener() {
@@ -197,9 +199,53 @@ public class LoginActivity extends AppCompatActivity {
                 loginFacebook.invalidate();
                 loginFacebook.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
                     @Override
-                    public void onSuccess(LoginResult loginResult) {
+                    public void onSuccess(final LoginResult loginResult) {
                         Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                        handleFacebookAccessToken(loginResult.getAccessToken());
+
+                        // App code
+                        GraphRequest request = GraphRequest.newMeRequest(
+                                loginResult.getAccessToken(),
+                                new GraphRequest.GraphJSONObjectCallback() {
+                                    @Override
+                                    public void onCompleted(JSONObject object, GraphResponse response) {
+                                        Log.v("LoginActivity", response.toString());
+
+                                        // Application code
+                                        try {
+
+
+                                            if (Constants.isHasJson(object, "gender")) {
+                                                if (object.getString("gender").equals("male")) {
+                                                    appgenero = "1";
+                                                } else {
+                                                    appgenero = "2";
+                                                }
+                                            }
+
+                                            if (Constants.isHasJson(object, "birthday")) {
+                                                appbirthday = object.getString("birthday"); // 01/31/1980 format
+                                            }
+
+                                            if (Constants.isHasJson(object, "name")) {
+                                                String[] name = object.getString("name").split(" ");
+
+                                                appname = name[0];
+                                                applastname = name[1];
+                                            }
+
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        handleFacebookAccessToken(loginResult.getAccessToken());
+
+                                    }
+                                });
+                        Bundle parameters = new Bundle();
+                        parameters.putString("fields", "id,name,email,gender,birthday");
+                        request.setParameters(parameters);
+                        request.executeAsync();
                     }
 
                     @Override
@@ -307,12 +353,6 @@ public class LoginActivity extends AppCompatActivity {
         pDialog.setCancelable(true);
         pDialog.show();
 
-
-
-        /*progressDialog = new ProgressDialog(LoginActivity.this);
-        progressDialog.show();
-        progressDialog.setContentView(R.layout.progressdialog);
-        progressDialog.setCancelable(false);*/
 
         if(token.equals("")) {
             //authenticate user email
@@ -533,11 +573,10 @@ public class LoginActivity extends AppCompatActivity {
                     imagen="";
                 }
                 data.setUrl_imagen(imagen);
-                data.setName("");
-                data.setLastname("");
-                data.setDate_created("");
-                data.setFecha_nac("");
-                data.setGenero("");
+                data.setName(appname);
+                data.setLastname(applastname);
+                data.setFecha_nac(appbirthday);
+                data.setGenero(appgenero);
                 data.setType("1");
                 data.setLat("0");
                 data.setLog("0");
@@ -962,10 +1001,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
+
 
 
 }

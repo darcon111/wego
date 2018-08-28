@@ -90,7 +90,7 @@ import java.util.concurrent.TimeUnit;
 import com.vansuita.pickimage.listeners.IPickResult;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+
 
 public class PerfilActivity extends AppCompatActivity implements
         DatePickerDialog.OnDateSetListener,IPickResult{
@@ -156,11 +156,7 @@ public class PerfilActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/RobotoLight.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
+
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         setContentView(R.layout.activity_perfil);

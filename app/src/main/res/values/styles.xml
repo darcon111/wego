@@ -21,7 +21,7 @@
         <item name="android:itemBackground">@color/colorPrimary</item>
         <item name="android:popupMenuStyle">@style/PopupMenu</item>
         <item name="android:actionBarStyle">@style/ActionBar</item>
-        <item name="fontPath">fonts/RobotoLight.ttf</item>
+        <item name="android:fontFamily">@font/roboto_light</item>
 
     </style>
 
@@ -60,6 +60,8 @@
         <item name="android:layout_marginLeft">5dp</item>
         <item name="android:layout_marginRight">5dp</item>
         <item name="android:textColorHint">@color/colorSecondaryText</item>
+        <item name="android:fontFamily">@font/roboto_light</item>
+
     </style>
 
     <style name="AlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
@@ -126,6 +128,8 @@
         <item name="android:layout_marginBottom">5dp</item>
         <item name="android:layout_margin">5dp</item>
         <item name="android:textColor">@color/colorIcons</item>
+        <item name="android:fontFamily">@font/roboto_condensed_regular</item>
+
     </style>
 
 

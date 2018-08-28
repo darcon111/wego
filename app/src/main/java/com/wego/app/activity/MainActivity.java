@@ -57,8 +57,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -88,12 +87,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /* set orientation*/
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/RobotoLight.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
 
         appPreferences = new AppPreferences(MainActivity.this);
 
@@ -593,10 +586,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
 
 
 

@@ -18,8 +18,7 @@ import com.wego.app.adapter.TourFragmentPagerAdapter;
 import com.wego.app.config.AppPreferences;
 
 
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 
 public class TourActivity extends FragmentActivity {
     private AppPreferences app;
@@ -41,11 +40,7 @@ public class TourActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle arg0) {
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/RobotoLight.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
+
         super.onCreate(arg0);
         this.setContentView(R.layout.activity_tour);
 
@@ -116,9 +111,6 @@ public class TourActivity extends FragmentActivity {
         finish();
     }
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
+
 
 }

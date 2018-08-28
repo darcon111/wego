@@ -49,8 +49,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 
 public class RecursivoActivity extends AppCompatActivity {
 
@@ -69,12 +68,7 @@ public class RecursivoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recursivo);
 
-        /* set orientation*/
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/RobotoLight.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
+
 
         /* toolbar*/
         toolbar = (Toolbar) findViewById(R.id.toolbaruser);
@@ -401,10 +395,7 @@ public class RecursivoActivity extends AppCompatActivity {
 
 
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
+
 
 
 }

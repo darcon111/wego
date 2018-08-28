@@ -58,8 +58,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 
 public class ServiciesCaractActivity extends AppCompatActivity {
 
@@ -78,12 +77,6 @@ public class ServiciesCaractActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_servicies_caract);
 
-        /* set orientation*/
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/RobotoLight.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
 
         /* toolbar*/
         toolbar = (Toolbar) findViewById(R.id.toolbaruser);
@@ -464,10 +457,7 @@ public class ServiciesCaractActivity extends AppCompatActivity {
 
 
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
+
 
 
     private void load(boolean flag,int id){

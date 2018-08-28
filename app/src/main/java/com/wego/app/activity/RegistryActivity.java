@@ -21,7 +21,7 @@ import com.wego.app.config.AppPreferences;
 import com.wego.app.config.Constants;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+
 
 public class RegistryActivity extends AppCompatActivity {
 
@@ -37,11 +37,7 @@ public class RegistryActivity extends AppCompatActivity {
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_registro);
 
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/RobotoLight.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
+
 
         app = new AppPreferences(getApplicationContext());
         // Initialize Firebase Auth
