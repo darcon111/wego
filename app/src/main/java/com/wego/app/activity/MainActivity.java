@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
         ICONS[0] = R.drawable.ic_help;
         ICONS[1] = R.drawable.ic_build;
-        ICONS[2] = R.drawable.ic_location;
+        ICONS[2] = R.drawable.ic_location_on;
         ICONS[3] = R.drawable.ic_conta;
         ICONS[4] = R.drawable.ic_condition;
         ICONS[5] = R.drawable.ic_exit;
@@ -209,12 +209,19 @@ public class MainActivity extends AppCompatActivity {
 
                             break;
                         case 2:
+                            intent = new Intent(MainActivity.this,MyServiciesActivity.class);
+                            startActivity(intent);
 
                             break;
                         case 3:
 
+                            intent = new Intent(MainActivity.this,LocationActivity.class);
+                            startActivity(intent);
+
                             break;
                         case 4:
+                            intent = new Intent(MainActivity.this,ContactActivity.class);
+                            startActivity(intent);
 
                             break;
 

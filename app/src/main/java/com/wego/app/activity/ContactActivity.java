@@ -1,5 +1,6 @@
 package com.wego.app.activity;
 
+import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,13 +10,14 @@ import android.widget.TextView;
 
 import com.wego.app.R;
 
-public class MyContactsActivity extends AppCompatActivity {
+public class ContactActivity extends AppCompatActivity {
     private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_contacts);
+        setContentView(R.layout.activity_contact);
 
 
         /* toolbar*/
@@ -34,5 +36,6 @@ public class MyContactsActivity extends AppCompatActivity {
         } else {
             getSupportActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_arrow));
         }
+
     }
 }
