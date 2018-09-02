@@ -87,7 +87,7 @@
     <string name="foto">Fotos</string>
     <string name="miservicio">Mis Servicios</string>
     <string name="miubicaciones">Mis Ubicaciones</string>
-    <string name="micontactos">Mis Conctatos</string>
+    <string name="micontactos">Mis Contactos</string>
     <string name="miubicacion">Buscar ubicación</string>
     <string name="gps">Por favor habilite el gps</string>
     <string name="error_location">Ubicación no encontrada</string>
@@ -98,5 +98,14 @@
     <string name="selectimagen">Seleccione imagenes</string>
 
     <string name="colorAccent">#FF5252</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="principal">Principal</string>
+    <string name="editar">Editar</string>
+    <string name="save">Guardar</string>
+    <string name="error_contacto_nombre">Ya existe un contacto con ese nombre</string>
+    <string name="error_contacto_telefono">Ya existe un contacto con ese número</string>
+    <string name="error_contacto_delete">Contacto no puede ser borrado porque es principal</string>
+    <string name="nombre_contacto">Nombre</string>
+
 
 </resources>

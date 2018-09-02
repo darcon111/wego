@@ -86,7 +86,8 @@
         <activity android:name=".activity.MyContactsActivity" />
         <activity android:name=".activity.LocationActivity" />
         <activity android:name=".activity.PhotoActivity" />
-        <activity android:name=".activity.ContactActivity"></activity>
+        <activity android:name=".activity.ContactActivity" />
+        <activity android:name=".activity.AddContactActivity"></activity>
     </application>
 
 </manifest>
