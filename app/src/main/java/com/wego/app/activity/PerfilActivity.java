@@ -1150,6 +1150,7 @@ public class PerfilActivity extends AppCompatActivity implements
                     //params.put("identificacion", Constants.AESEncryptEntity(txtIdentificacion.getText().toString()));
                     //params.put("fecha_nacimiento", Constants.AESEncryptEntity(txtFecha.getText().toString()));
                     params.put("telefono", Constants.AESEncryptEntity(txttelefono.getText().toString()));
+                    params.put("origen_mod",Constants.AESEncryptEntity(Constants.getIPAddress(true)));
 
                     //params.put("tipo_identificacion", Constants.AESEncryptEntity(tipo_identificacion));
                     // params.put("estado_civil", Constants.AESEncryptEntity(estado_civil));
