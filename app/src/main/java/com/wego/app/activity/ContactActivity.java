@@ -742,8 +742,7 @@ public class ContactActivity extends AppCompatActivity {
                                             @Override
                                             public void onClick(SweetAlertDialog sDialog) {
                                                 sDialog.dismissWithAnimation();
-                                                FirebaseAuth.getInstance().signOut();
-                                                LoginManager.getInstance().logOut();
+
                                             }
                                         });
                                         pDialog.show();

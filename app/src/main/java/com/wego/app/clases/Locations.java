@@ -3,9 +3,12 @@ package com.wego.app.clases;
 public class Locations {
 
     private int id;
-    private String tipo_contacto;
-    private String valor;
     private String nombre;
+    private String latitud;
+    private String longitud;
+    private String direccion;
+    private String piso;
+    private String departamento;
     private int is_principal;
 
     public int getId() {
@@ -16,28 +19,52 @@ public class Locations {
         this.id = id;
     }
 
-    public String getTipo_contacto() {
-        return tipo_contacto;
-    }
-
-    public void setTipo_contacto(String tipo_contacto) {
-        this.tipo_contacto = tipo_contacto;
-    }
-
-    public String getValor() {
-        return valor;
-    }
-
-    public void setValor(String valor) {
-        this.valor = valor;
-    }
-
     public String getNombre() {
         return nombre;
     }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public String getLatitud() {
+        return latitud;
+    }
+
+    public void setLatitud(String latitud) {
+        this.latitud = latitud;
+    }
+
+    public String getLongitud() {
+        return longitud;
+    }
+
+    public void setLongitud(String longitud) {
+        this.longitud = longitud;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getPiso() {
+        return piso;
+    }
+
+    public void setPiso(String piso) {
+        this.piso = piso;
+    }
+
+    public String getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(String departamento) {
+        this.departamento = departamento;
     }
 
     public int getIs_principal() {
@@ -48,11 +75,14 @@ public class Locations {
         this.is_principal = is_principal;
     }
 
-    public Locations(int id, String tipo_contacto, String valor, String nombre, int is_principal) {
+    public Locations(int id, String nombre, String latitud, String longitud, String direccion, String piso, String departamento, int is_principal) {
         this.id = id;
-        this.tipo_contacto = tipo_contacto;
-        this.valor = valor;
         this.nombre = nombre;
+        this.latitud = latitud;
+        this.longitud = longitud;
+        this.direccion = direccion;
+        this.piso = piso;
+        this.departamento = departamento;
         this.is_principal = is_principal;
     }
 }

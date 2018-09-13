@@ -117,12 +117,12 @@ public class AddContactActivity extends AppCompatActivity {
     public void save(View v){
 
         if(txtNombre.getText().toString().trim().equals("")){
-            txtNombre.setError(getString(R.string.error_nombres));
+            txtNombre.setError(getString(R.string.error_contacto_nombre2));
             return;
         }
         if(txtTelefono.getText().toString().trim().equals(""))
         {
-            txtTelefono.setError(getString(R.string.error_genero));
+            txtTelefono.setError(getString(R.string.error_contacto_telefono2));
             return;
         }
 

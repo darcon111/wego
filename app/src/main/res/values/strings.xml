@@ -105,7 +105,19 @@
     <string name="error_contacto_nombre">Ya existe un contacto con ese nombre</string>
     <string name="error_contacto_telefono">Ya existe un contacto con ese número</string>
     <string name="error_contacto_delete">Contacto no puede ser borrado porque es principal</string>
+    <string name="error_ubicacion_delete">Ubicación no puede ser borrado porque es principal</string>
     <string name="nombre_contacto">Nombre</string>
+    <string name="error_ubicacion_nombre">Ya existe un ubicación con ese nombre</string>
+    <string name="nombre_ubicacion">Nombre</string>
+
+    <string name="error_contacto_nombre2">Ingrese un nombre</string>
+    <string name="error_contacto_telefono2">Ingrese un número de teléfono</string>
+    <string name="error_ubicacion">Seleccione un ubicación valida</string>
+
+
+    <string name="default_notification_channel_id">1000005</string>
+
+
 
 
 </resources>

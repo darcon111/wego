@@ -165,7 +165,7 @@ public class LocationActivity extends AppCompatActivity {
         Constants.deleteCache(LocationActivity.this);
 
         final String finalPersona = persona_id;
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"getContacto/format/json",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"getUbicaciones/format/json",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String responde) {
@@ -212,7 +212,7 @@ public class LocationActivity extends AppCompatActivity {
                                             @Override
                                             public void run() {
                                                 try {
-                                                    mListLocations.add(new Locations(Integer.parseInt(Constants.AESDecryptEntity(finalMObj.getString("id"))),Constants.AESDecryptEntity(finalMObj.getString("tipo_contacto")),Constants.AESDecryptEntity(finalMObj.getString("valor")), Constants.AESDecryptEntity(finalMObj.getString("nombre")),Integer.parseInt(Constants.AESDecryptEntity(finalMObj.getString("is_principal"))) ));
+                                                    mListLocations.add(new Locations(Integer.parseInt(Constants.AESDecryptEntity(finalMObj.getString("id"))),Constants.AESDecryptEntity(finalMObj.getString("nombre")),Constants.AESDecryptEntity(finalMObj.getString("latitud")), Constants.AESDecryptEntity(finalMObj.getString("longitud")),Constants.AESDecryptEntity(finalMObj.getString("direccion")),Constants.AESDecryptEntity(finalMObj.getString("piso")),Constants.AESDecryptEntity(finalMObj.getString("departamento")),Integer.parseInt(Constants.AESDecryptEntity(finalMObj.getString("is_principal"))) ));
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
                                                 }
@@ -349,7 +349,7 @@ public class LocationActivity extends AppCompatActivity {
 
         Constants.deleteCache(getApplicationContext());
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"save_contacto_setprincipal/format/json",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"save_ubicacion_setprincipal/format/json",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String responde) {
@@ -510,7 +510,7 @@ public class LocationActivity extends AppCompatActivity {
 
         Constants.deleteCache(getApplicationContext());
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"save_contacto_delete/format/json",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"save_ubicacion_delete/format/json",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String responde) {
@@ -654,7 +654,7 @@ public class LocationActivity extends AppCompatActivity {
         @Override
         public LocationRecycleHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
 
-            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_contactos, viewGroup, false);
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_ubicacion, viewGroup, false);
             setAnimation(v,i);
             return new LocationRecycleHolder(v);
         }
@@ -664,7 +664,7 @@ public class LocationActivity extends AppCompatActivity {
         public void onBindViewHolder(final LocationRecycleHolder productHolder, final int i) {
 
             productHolder.mtxtNombre.setText(mListLocations.get(i).getNombre());
-            productHolder.mtxtValor.setText(mListLocations.get(i).getValor());
+            productHolder.mtxtValor.setText(mListLocations.get(i).getDireccion());
 
             if(mListLocations.get(i).getIs_principal()==1){
                 productHolder.mStart.setVisibility(View.VISIBLE);
@@ -714,7 +714,7 @@ public class LocationActivity extends AppCompatActivity {
 
                                 case R.id.editar:
 
-                                    Intent intent = new Intent(LocationActivity.this,AddContactActivity.class);
+                                    Intent intent = new Intent(LocationActivity.this,AddLocationActivity.class);
                                     intent.putExtra("i",String.valueOf(i));
                                     startActivity(intent);
                                     return true;
@@ -725,14 +725,13 @@ public class LocationActivity extends AppCompatActivity {
                                     {
                                         pDialog= new SweetAlertDialog(LocationActivity.this, SweetAlertDialog.ERROR_TYPE);
                                         pDialog.setTitleText(getResources().getString(R.string.app_name));
-                                        pDialog.setContentText(getString(R.string.error_contacto_delete));
+                                        pDialog.setContentText(getString(R.string.error_ubicacion_delete));
                                         pDialog.setConfirmText(getResources().getString(R.string.ok));
                                         pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                             @Override
                                             public void onClick(SweetAlertDialog sDialog) {
                                                 sDialog.dismissWithAnimation();
-                                                FirebaseAuth.getInstance().signOut();
-                                                LoginManager.getInstance().logOut();
+
                                             }
                                         });
                                         pDialog.show();
