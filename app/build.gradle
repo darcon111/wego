@@ -54,6 +54,7 @@ dependencies {
     implementation 'com.android.support:support-compat:27.1.1'
     implementation 'com.android.support:support-core-ui:27.1.1'
     implementation 'com.github.bumptech.glide:glide:3.8.0'
+    implementation 'com.google.firebase:firebase-auth:16.0.3'
     implementation 'com.google.firebase:firebase-core:16.0.3'
     implementation 'com.google.firebase:firebase-database:16.0.2'
     implementation 'com.google.firebase:firebase-iid:17.0.0'
@@ -69,6 +70,7 @@ dependencies {
     implementation project(':SweetAlert')
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
+    implementation 'com.google.android.gms:play-services-places:15.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

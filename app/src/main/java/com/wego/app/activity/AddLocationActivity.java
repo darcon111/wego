@@ -6,19 +6,31 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,14 +57,21 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.firebase.auth.FirebaseAuth;
 import com.wego.app.R;
 import com.wego.app.clases.GPS;
@@ -63,7 +82,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -76,7 +98,6 @@ public class AddLocationActivity extends AppCompatActivity {
     private String lat,log;
     private GPS gps = null;
     private String TAG = MyLocationsActivity.class.getName();
-    private SearchView txtlocation;
     private SweetAlertDialog pDialog;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     private Button btnGuardar;
@@ -87,8 +108,12 @@ public class AddLocationActivity extends AppCompatActivity {
     private static AppPreferences app;
     private int i=-1;
     private int id=0;
-    private boolean busqueda= true;
+    private PlaceAutocompleteFragment placeAutocompleteFragment;
+    private TextView busqueda;
+    private TextView txtBusqueda;
 
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -134,39 +159,46 @@ public class AddLocationActivity extends AppCompatActivity {
 
 
         app = new AppPreferences(getApplicationContext());
-        txtlocation=(SearchView) findViewById(R.id.txtlocation);
+
         txtNombre=(EditText) findViewById(R.id.txtNombre);
         txtPiso=(EditText) findViewById(R.id.txtPiso);
         txtDepartamento=(EditText) findViewById(R.id.txtDepartamento);
+        txtBusqueda=(TextView) findViewById(R.id.txtBusqueda);
 
 
 
+        placeAutocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
-        txtlocation.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        AutocompleteFilter autocompleteFilter = new AutocompleteFilter.Builder().setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS).setCountry("EC").build();
+
+        ImageView searchIcon = (ImageView)((LinearLayout)placeAutocompleteFragment.getView()).getChildAt(0);
+        ImageView closed = (ImageView)((LinearLayout)placeAutocompleteFragment.getView()).getChildAt(2);
+        busqueda = (TextView) ((LinearLayout)placeAutocompleteFragment.getView()).getChildAt(1);
+
+        busqueda.setTextColor(getColor(R.color.colorPrimaryText));
+        busqueda.setHintTextColor(getColor(R.color.colorPrimaryText));
+        // Set the desired icon
+        searchIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_search));
+        closed.setImageDrawable(getResources().getDrawable(R.drawable.ic_close));
+
+
+
+        placeAutocompleteFragment.setFilter(autocompleteFilter);
+
+        placeAutocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                if(busqueda==true)
-                {
-                    callSearch(query);
-                }else
-                {
-                    busqueda=true;
-                }
+            public void onPlaceSelected(Place place) {
+                eventSearch(place.getName().toString());
 
-                return true;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
+            public void onError(Status status) {
+
+
             }
-
-
-            public void callSearch(String query) {
-                search();
-            }
-
         });
+
 
         btnGuardar=(Button) findViewById(R.id.btnsave);
 
@@ -226,12 +258,28 @@ public class AddLocationActivity extends AppCompatActivity {
 
                 map=googleMap;
 
+                try {
+                    boolean success = map.setMapStyle(
+                            MapStyleOptions.loadRawResourceStyle(
+                                    AddLocationActivity.this, R.raw.mapstyle));
+
+                    if (!success) {
+                        Log.e(TAG, "Style parsing failed.");
+                    }
+                } catch (Resources.NotFoundException e) {
+                    Log.e(TAG, "Can't find style. Error: ", e);
+                }
+
+
                 UiSettings mapUiSettings = map.getUiSettings();
                 mapUiSettings.setZoomControlsEnabled(true);
+                //mapUiSettings.setAllGesturesEnabled(true);
+                mapUiSettings.setScrollGesturesEnabled(true);
+                mapUiSettings.setZoomGesturesEnabled(true);
                 mapUiSettings.setMapToolbarEnabled(false);
 
 
-                map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                /*map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
                     @Override
                     public void onMapClick(LatLng point) {
@@ -241,6 +289,51 @@ public class AddLocationActivity extends AppCompatActivity {
                         map.addMarker(new MarkerOptions().position(point));
                         lat=String.valueOf(point.latitude);
                         log=String.valueOf(point.longitude);
+
+                        LatLng posicion = new LatLng(Double.parseDouble(lat), Double.parseDouble(log));
+
+                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                                .target(posicion)      // Sets the center of the map to Mountain View
+                                .zoom(15)                   // Sets the zoom
+                                .bearing(90)                // Sets the orientation of the camera to east
+                                .tilt(30)                   // Sets the tilt of the camera to 30 degrees
+                                .build();                   // Creates a CameraPosition from the builder
+                        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                    }
+                });*/
+
+
+                map.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+                    @Override
+                    public void onCameraIdle() {
+                        //get latlng at the center by calling
+                        LatLng mylocation = map.getCameraPosition().target;
+
+                        lat=String.valueOf(mylocation.latitude);
+                        log=String.valueOf(mylocation.longitude);
+
+
+                        Geocoder geocoder;
+                        List<Address> direccion;
+                        geocoder = new Geocoder(AddLocationActivity.this, Locale.getDefault());
+
+                        try {
+                            direccion = geocoder.getFromLocation(mylocation.latitude, mylocation.longitude, 1);
+
+                            if(direccion.size()>=1) {
+                                txtBusqueda.setText(direccion.get(0).getAddressLine(0));
+                            }else
+                            {
+                                txtBusqueda.setText("");
+                            }
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            busqueda.setText("");
+                        }
+
+
                     }
                 });
 
@@ -250,23 +343,12 @@ public class AddLocationActivity extends AppCompatActivity {
                     i= Integer.parseInt(bun.getString("i"));
 
                     txtNombre.setText(LocationActivity.mListLocations.get(i).getNombre());
-                    //txtlocation.setQuery(LocationActivity.mListLocations.get(i).getDireccion().toString(),false);
+                    busqueda.setText(LocationActivity.mListLocations.get(i).getDireccion().toString());
                     txtPiso.setText(LocationActivity.mListLocations.get(i).getPiso());
                     txtDepartamento.setText(LocationActivity.mListLocations.get(i).getDepartamento());
                     id= LocationActivity.mListLocations.get(i).getId();
 
-                    txtlocation.post(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            // Important! Make sure searchView has been initialized
-                            // and referenced to the correct (current) SearchView.
-                            // Config changes (e.g. screen rotation) may make the
-                            // variable value null.
-                            busqueda=false;
-                            txtlocation.setQuery(LocationActivity.mListLocations.get(i).getDireccion().toString(), true);
-                        }
-                        });
 
 
                     lat=  LocationActivity.mListLocations.get(i).getLatitud();
@@ -280,9 +362,6 @@ public class AddLocationActivity extends AppCompatActivity {
 
             }
         });
-
-
-
 
 
 
@@ -321,10 +400,15 @@ public class AddLocationActivity extends AppCompatActivity {
     private void changePosition()
     {
 
+        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.ic_my_location);
+
+        Bitmap b=bitmapdraw.getBitmap();
+        Bitmap smallMarker = Bitmap.createBitmap(b);
+
         // Add a marker in Sydney and move the camera
         LatLng posicion = new LatLng(Double.parseDouble(lat), Double.parseDouble(log));
         map.clear();
-        map.addMarker(new MarkerOptions().position(posicion).title("Me"));
+        map.addMarker(new MarkerOptions().position(posicion).title("Me")).setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker));
         map.moveCamera(CameraUpdateFactory.newLatLng(posicion));
 
         // Move the camera instantly to Sydney with a zoom of 15.
@@ -339,14 +423,19 @@ public class AddLocationActivity extends AppCompatActivity {
         // Construct a CameraPosition focusing on Mountain View and animate the camera to that position.
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(posicion)      // Sets the center of the map to Mountain View
-                .zoom(10)                   // Sets the zoom
+                .zoom(15)                   // Sets the zoom
                 .bearing(90)                // Sets the orientation of the camera to east
                 .tilt(30)                   // Sets the tilt of the camera to 30 degrees
                 .build();                   // Creates a CameraPosition from the builder
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
+
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+
     }
+
+
 
     private void eventSearch(final String search){
 
@@ -358,7 +447,7 @@ public class AddLocationActivity extends AppCompatActivity {
         progressDialog.setContentView(R.layout.progressdialog);
         progressDialog.setCancelable(false);
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.URL_GOOGLE+"?address="+search.replaceAll(" ", "%20")+"",
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.URL_GOOGLE+"?address="+search.replaceAll(" ", "%20")+"&key="+getString(R.string.api_maps),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String responde) {
@@ -494,16 +583,6 @@ public class AddLocationActivity extends AppCompatActivity {
 
     }
 
-    public void search()
-    {
-        // Ocultar el teclado
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(txtlocation.getWindowToken(), 0);
-
-        //if(!txtlocation.getQuery().toString().equals(getString(R.string.location2))) {
-        eventSearch(txtlocation.getQuery().toString());
-        //}
-    }
 
 
 
@@ -686,12 +765,11 @@ public class AddLocationActivity extends AppCompatActivity {
                 try {
                     params.put("persona_id", Constants.AESEncryptEntity(app.getUserId()));
                     params.put("nombre", Constants.AESEncryptEntity(txtNombre.getText().toString().trim()));
-                    params.put("direccion", Constants.AESEncryptEntity(txtlocation.getQuery().toString().trim()));
+                    params.put("direccion", Constants.AESEncryptEntity(txtBusqueda.getText().toString().trim()));
                     params.put("piso", Constants.AESEncryptEntity(txtPiso.getText().toString().trim()));
                     params.put("departamento", Constants.AESEncryptEntity(txtDepartamento.getText().toString().trim()));
                     params.put("latitud", Constants.AESEncryptEntity(lat));
                     params.put("longitud", Constants.AESEncryptEntity(log));
-
                     params.put("origen_crea", Constants.AESEncryptEntity(Constants.getIPAddress(true)));
                     params.put("id", Constants.AESEncryptEntity(String.valueOf(id)));
 

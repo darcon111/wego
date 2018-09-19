@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
         ICONS[0] = R.drawable.ic_help;
         ICONS[1] = R.drawable.ic_build;
-        ICONS[2] = R.drawable.ic_location_on;
+        ICONS[2] = R.drawable.ic_location2;
         ICONS[3] = R.drawable.ic_conta;
         ICONS[4] = R.drawable.ic_condition;
         ICONS[5] = R.drawable.ic_exit;
