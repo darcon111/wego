@@ -626,14 +626,21 @@ public class LoginActivity extends AppCompatActivity {
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
+                        if (task.isSuccessful()) {
+
+                            String imagen ="https://graph.facebook.com/"+token.getUserId()+"/picture?type=large";
+                            insertUser(imagen);
+                            databaseUsers.removeEventListener(listen);
 
                             auth(token.getToken().toString());
+
+
+
                         }else
                         {
 
-                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                            if(user.isEmailVerified()==false) {
+                            messageFirebase(task);
+                            /*if(user.isEmailVerified()==false) {
                                 user.sendEmailVerification();
 
 
@@ -653,12 +660,10 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-                            }else {
-                                String imagen ="https://graph.facebook.com/"+token.getUserId()+"/picture?type=large";
-                                insertUser(imagen);
-                                databaseUsers.removeEventListener(listen);
+                            }else {*/
 
-                            }
+
+                            //}
                         }
 
                         // ...
