@@ -88,7 +88,7 @@
             android:layout_marginTop="10dp"
             android:text="@string/hora" />
 
-        <com.wego.app.clases.Spinner.MaterialSpinner
+        <ec.com.wego.app.clases.Spinner.MaterialSpinner
             android:id="@+id/horario"
             style="@style/editText"
             android:layout_width="match_parent"
