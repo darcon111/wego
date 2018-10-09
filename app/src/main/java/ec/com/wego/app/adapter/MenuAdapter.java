@@ -153,15 +153,17 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         else{
 
             holder.profile.setImageResource(profile);           // Similarly we set the resources for header view
-            if(!imagen_url.equals("")) {
-                Glide.with(mContext).load(imagen_url)
-                        .thumbnail(1.0f)
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(holder.profile);
-            }else
-            {
-                holder.profile.setImageResource(R.drawable.ic_user);
+            if(imagen_url!=null){
+                if(!imagen_url.equals("")) {
+                    Glide.with(mContext).load(imagen_url)
+                            .thumbnail(1.0f)
+                            .crossFade()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(holder.profile);
+                }else
+                {
+                    holder.profile.setImageResource(R.drawable.ic_user);
+                }
             }
 
             holder.Name.setText(name);

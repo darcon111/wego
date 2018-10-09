@@ -175,8 +175,8 @@ public class AddLocationActivity extends AppCompatActivity {
         ImageView closed = (ImageView)((LinearLayout)placeAutocompleteFragment.getView()).getChildAt(2);
         busqueda = (TextView) ((LinearLayout)placeAutocompleteFragment.getView()).getChildAt(1);
 
-        busqueda.setTextColor(getColor(R.color.colorPrimaryText));
-        busqueda.setHintTextColor(getColor(R.color.colorPrimaryText));
+        busqueda.setTextColor(getResources().getColor(R.color.colorPrimaryText));
+        busqueda.setHintTextColor(getResources().getColor(R.color.colorPrimaryText));
         // Set the desired icon
         searchIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_search));
         closed.setImageDrawable(getResources().getDrawable(R.drawable.ic_close));

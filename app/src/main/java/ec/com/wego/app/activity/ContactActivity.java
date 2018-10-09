@@ -1,6 +1,7 @@
 package ec.com.wego.app.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -12,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuPopupHelper;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -75,6 +77,7 @@ public class ContactActivity extends AppCompatActivity {
     private String TAG = ContactActivity.class.getName();
 
     private PopupMenu popupMenu;
+    private int select=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +118,14 @@ public class ContactActivity extends AppCompatActivity {
         mListContactos = new ArrayList<Contacts>();
 
 
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras != null) {
 
+                select = Integer.parseInt(extras.getString("select"));
+
+            }
+        }
 
 
     }
@@ -681,111 +691,124 @@ public class ContactActivity extends AppCompatActivity {
                 productHolder.mStart.setVisibility(View.VISIBLE);
             }
 
-            productHolder.mImage.setOnClickListener(new View.OnClickListener() {
-                @SuppressLint("RestrictedApi")
-                @Override
-                public void onClick(View v) {
+            if(select==0) {
+                productHolder.mImage.setOnClickListener(new View.OnClickListener() {
+                    @SuppressLint("RestrictedApi")
+                    @Override
+                    public void onClick(View v) {
 
-                    if (popupMenu != null) {
-                        popupMenu.dismiss();
-                    }
-
-
-
-                    popupMenu = new PopupMenu(v.getContext(), v);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        popupMenu.setGravity(Gravity.CENTER);
-                    }
-                    if(mListContactos.get(i).getIs_principal()==1){
-                        popupMenu.inflate(R.menu.menu2);
-                    }else
-                    {
-                        popupMenu.inflate(R.menu.menu);
-                    }
-
-
-
-                    popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
-                        @Override
-                        public void onDismiss(PopupMenu menu) {
-                            popupMenu = null;
+                        if (popupMenu != null) {
+                            popupMenu.dismiss();
                         }
-                    });
 
 
-                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
+                        popupMenu = new PopupMenu(v.getContext(), v);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            popupMenu.setGravity(Gravity.CENTER);
+                        }
+                        if (mListContactos.get(i).getIs_principal() == 1) {
+                            popupMenu.inflate(R.menu.menu2);
+                        } else {
+                            popupMenu.inflate(R.menu.menu);
+                        }
 
-                            switch (item.getItemId()) {
-                                case R.id.principal:
 
-                                    primaryTask(i);
-                                    return true;
-
-                                case R.id.editar:
-
-                                    Intent intent = new Intent(ContactActivity.this,AddContactActivity.class);
-                                    intent.putExtra("i",String.valueOf(i));
-                                    startActivity(intent);
-                                    return true;
-
-                                case R.id.eliminar:
-
-                                    if(mListContactos.get(i).getIs_principal()==1)
-                                    {
-                                        pDialog= new SweetAlertDialog(ContactActivity.this, SweetAlertDialog.ERROR_TYPE);
-                                        pDialog.setTitleText(getResources().getString(R.string.app_name));
-                                        pDialog.setContentText(getString(R.string.error_contacto_delete));
-                                        pDialog.setConfirmText(getResources().getString(R.string.ok));
-                                        pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                            @Override
-                                            public void onClick(SweetAlertDialog sDialog) {
-                                                sDialog.dismissWithAnimation();
-
-                                            }
-                                        });
-                                        pDialog.show();
-
-                                    }else {
-
-                                        deleteTask(i);
-                                    }
-                                    return true;
-
-                                default:
-                                    return false;
+                        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+                            @Override
+                            public void onDismiss(PopupMenu menu) {
+                                popupMenu = null;
                             }
+                        });
 
 
-                        }
-                    });
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+
+                                switch (item.getItemId()) {
+                                    case R.id.principal:
+
+                                        primaryTask(i);
+                                        return true;
+
+                                    case R.id.editar:
+
+                                        Intent intent = new Intent(ContactActivity.this, AddContactActivity.class);
+                                        intent.putExtra("i", String.valueOf(i));
+                                        startActivity(intent);
+                                        return true;
+
+                                    case R.id.eliminar:
+
+                                        if (mListContactos.get(i).getIs_principal() == 1) {
+                                            pDialog = new SweetAlertDialog(ContactActivity.this, SweetAlertDialog.ERROR_TYPE);
+                                            pDialog.setTitleText(getResources().getString(R.string.app_name));
+                                            pDialog.setContentText(getString(R.string.error_contacto_delete));
+                                            pDialog.setConfirmText(getResources().getString(R.string.ok));
+                                            pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                @Override
+                                                public void onClick(SweetAlertDialog sDialog) {
+                                                    sDialog.dismissWithAnimation();
+
+                                                }
+                                            });
+                                            pDialog.show();
+
+                                        } else {
+
+                                            deleteTask(i);
+                                        }
+                                        return true;
+
+                                    default:
+                                        return false;
+                                }
 
 
-
-                    try {
-                        Field[] fields = popupMenu.getClass().getDeclaredFields();
-                        for (Field field : fields) {
-                            if ("mPopup".equals(field.getName())) {
-                                field.setAccessible(true);
-                                Object menuPopupHelper = field.get(popupMenu);
-                                Class<?> classPopupHelper = Class.forName(menuPopupHelper.getClass().getName());
-                                Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon", boolean.class);
-                                setForceIcons.invoke(menuPopupHelper, true);
-                                break;
                             }
+                        });
+
+
+                        try {
+                            Field[] fields = popupMenu.getClass().getDeclaredFields();
+                            for (Field field : fields) {
+                                if ("mPopup".equals(field.getName())) {
+                                    field.setAccessible(true);
+                                    Object menuPopupHelper = field.get(popupMenu);
+                                    Class<?> classPopupHelper = Class.forName(menuPopupHelper.getClass().getName());
+                                    Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon", boolean.class);
+                                    setForceIcons.invoke(menuPopupHelper, true);
+                                    break;
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+
+
+                        popupMenu.show();
+
+
                     }
+                });
+            }else{
+                productHolder.mImage.setVisibility(View.GONE);
+            }
 
+            if(select==1){
+                productHolder.mContenedor.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-                    popupMenu.show();
+                        Intent returnIntent = new Intent();
+                        returnIntent.putExtra("id_contacto",String.valueOf(mListContactos.get(i).getId()));
+                        returnIntent.putExtra("contacto",String.valueOf(mListContactos.get(i).getNombre()));
+                        setResult(Activity.RESULT_OK,returnIntent);
+                        finish();
 
-
-
-                }
-            });
+                    }
+                });
+            }
 
 
 
@@ -836,6 +859,7 @@ public class ContactActivity extends AppCompatActivity {
         public TextView mtxtValor;
         public ImageView mImage;
         public ImageView mStart;
+        public CardView mContenedor;
 
 
         public ContactoRecycleHolder(View itemView) {
@@ -844,6 +868,7 @@ public class ContactActivity extends AppCompatActivity {
             mtxtValor = (TextView) itemView.findViewById(R.id.txtValor);
             mImage = (ImageView) itemView.findViewById(R.id.imagen);
             mStart = (ImageView) itemView.findViewById(R.id.start);
+            mContenedor = (CardView) itemView.findViewById(R.id.contenedor);
         }
     }
 

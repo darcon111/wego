@@ -41,8 +41,16 @@ import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
 import ec.com.wego.app.R;
 import ec.com.wego.app.adapter.MenuAdapter;
+import ec.com.wego.app.clases.User;
 import ec.com.wego.app.config.AppPreferences;
 import ec.com.wego.app.config.Constants;
 import ec.com.wego.app.holder.Categories;
@@ -54,6 +62,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -81,6 +90,10 @@ public class MainActivity extends AppCompatActivity {
 
     private SweetAlertDialog pDialog;
     private AppPreferences appPreferences;
+    private DatabaseReference databaseUsers;
+    private User Utemp;
+    private String provider;
+    private String imagen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,7 +169,87 @@ public class MainActivity extends AppCompatActivity {
 
         validaTask(user.getEmail());
 
-        menu();
+        databaseUsers = FirebaseDatabase.getInstance().getReference("users");
+        databaseUsers.keepSynced(true);
+
+        Query userquery = databaseUsers
+                .orderByChild("firebaseId").equalTo(user.getUid());
+
+        userquery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+
+                    Utemp = postSnapshot.getValue(User.class);
+                    databaseUsers.removeEventListener(this);
+
+
+                    if (user != null) {
+                        List<String> listProvider = user.getProviders();
+                        provider = listProvider.get(0);
+
+                        if(Utemp.getUrl_imagen()!=null){
+
+                            if(!Utemp.getUrl_imagen().equals(""))
+                            {
+                                imagen=Utemp.getUrl_imagen().toString();
+                            }else
+                            {
+                                if (user.getPhotoUrl() != null) {
+                                    imagen = user.getPhotoUrl().toString();
+                                }
+                            }
+
+                        }else {
+                            // User is signed in
+                            if (user.getPhotoUrl() != null) {
+                                imagen = user.getPhotoUrl().toString();
+                            }
+                        }
+
+
+
+                        if (Utemp == null) {
+                            try {
+                                name = user.getEmail().toString();
+                            } catch (Exception e) {
+                                if (user.getDisplayName() != null) {
+                                    name = user.getDisplayName().toString();
+                                }
+                            }
+                        } else {
+                            if (!Utemp.getName().equals("")) {
+                                name = Utemp.getName() + " " + Utemp.getLastname();
+                            }
+                        }
+
+
+                        if (imagen == null) {
+                            imagen = "";
+                        }
+                        if (name == null) {
+                            name = "";
+                        }
+                    }
+
+
+
+
+                }
+                menu();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, "onCancelled", databaseError.toException());
+            }
+        });
+
+
+
+
 
 
     }
@@ -165,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
     {
 
 
-            mAdapter = new MenuAdapter(TITLES, ICONS, appPreferences.getUser(), PROFILE, appPreferences.getImagen(), MainActivity.this);       // Creating the Adapter of MyAdapter class(which we are going to see in a bit)
+            mAdapter = new MenuAdapter(TITLES, ICONS, name, PROFILE, imagen, MainActivity.this);       // Creating the Adapter of MyAdapter class(which we are going to see in a bit)
 
             mRecyclerView_main.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
 
@@ -582,9 +675,11 @@ public class MainActivity extends AppCompatActivity {
 
         if(appPreferences.getActualizar().equals("1")){
 
-            mAdapter.setName(appPreferences.getUser());
-            mAdapter.notifyItemChanged(0);
-            appPreferences.setActualizar("0");
+            if(mAdapter!=null) {
+                mAdapter.setName(appPreferences.getUser());
+                mAdapter.notifyItemChanged(0);
+                appPreferences.setActualizar("0");
+            }
         }
 
 

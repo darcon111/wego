@@ -114,6 +114,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText txtEmail,txtPass;
 
     private SweetAlertDialog pDialog;
+    private String imagen_perfil="";
 
     //data facebook
     private String appname="",applastname="";
@@ -446,7 +447,7 @@ public class LoginActivity extends AppCompatActivity {
                             }else
                             {
                                 pDialog.dismiss();
-                                insertUser("");
+                                insertUser(imagen_perfil);
                                 databaseUsers.removeEventListener(listen);
                             }
 
@@ -532,12 +533,14 @@ public class LoginActivity extends AppCompatActivity {
                 //Saving
                 databaseUsers.child(id).setValue(data);
                 app.setUserId(id);
+                app.setImagen(imagen);
 
 
             }
         }else
         {
             app.setUserId(Utemp.getId());
+            app.setImagen(imagen);
             if(!imagen.equals("")) {
                 databaseUsers.child(Utemp.getId()).child("url_imagen").setValue(imagen);
 
@@ -628,45 +631,21 @@ public class LoginActivity extends AppCompatActivity {
                         // signed in user can be handled in the listener.
                         if (task.isSuccessful()) {
 
-                            String imagen ="https://graph.facebook.com/"+token.getUserId()+"/picture?type=large";
-                            insertUser(imagen);
+                            imagen_perfil ="https://graph.facebook.com/"+token.getUserId()+"/picture?type=large";
                             databaseUsers.removeEventListener(listen);
-
-                            auth(token.getToken().toString());
+                            insertUser(imagen_perfil);
+                            //auth(token.getToken().toString());
 
 
 
                         }else
                         {
-
+                            LoginManager.getInstance().logOut();
+                            FirebaseAuth.getInstance().signOut();
                             messageFirebase(task);
-                            /*if(user.isEmailVerified()==false) {
-                                user.sendEmailVerification();
-
-
-                                pDialog= new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.WARNING_TYPE);
-                                pDialog.setTitleText(getResources().getString(R.string.app_name));
-                                pDialog.setContentText(getResources().getString(R.string.user_create));
-                                pDialog.setConfirmText(getResources().getString(R.string.ok));
-                                pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sDialog) {
-                                        sDialog.dismissWithAnimation();
-                                        LoginManager.getInstance().logOut();
-                                    }
-                                });
-                                pDialog.show();
-
-
-
-
-                            }else {*/
-
-
-                            //}
+                            //auth(token.getToken().toString());
                         }
 
-                        // ...
                     }
                 });
     }
@@ -790,7 +769,53 @@ public class LoginActivity extends AppCompatActivity {
         }
 
 
-        auth("");
+        mAuth.createUserWithEmailAndPassword(txtEmail.getText().toString(), txtPass.getText().toString())
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+
+
+                        if (!task.isSuccessful()) {
+                            auth("");
+                        }
+                        else
+                        {
+                            /* correo verificacion */
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            if(user.isEmailVerified()==false) {
+                                user.sendEmailVerification();
+
+
+                                pDialog= new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.SUCCESS_TYPE);
+                                pDialog.setTitleText(getResources().getString(R.string.app_name));
+                                pDialog.setContentText(getString(R.string.user_create));
+                                pDialog.setConfirmText(getResources().getString(R.string.ok));
+                                pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sDialog) {
+                                        sDialog.dismissWithAnimation();
+                                        clear();
+                                    }
+                                });
+                                pDialog.show();
+
+                            }else {
+                                insertUser("");
+                                databaseUsers.removeEventListener(listen);
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+
+                        // ...
+                    }
+                });
 
 
     }

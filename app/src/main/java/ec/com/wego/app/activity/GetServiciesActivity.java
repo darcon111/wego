@@ -18,6 +18,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import ec.com.wego.app.R;
 import ec.com.wego.app.clases.Spinner.MaterialSpinner;
 import ec.com.wego.app.config.AppPreferences;
@@ -73,7 +75,28 @@ public class GetServiciesActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
 
+                if(txtdia.getText().toString().equals("")){
+                    new SweetAlertDialog(GetServiciesActivity.this, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText(getResources().getString(R.string.app_name))
+                            .setContentText(getResources().getString(R.string.error_dia))
+                            .setConfirmText(getResources().getString(R.string.ok))
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sDialog) {
+                                    sDialog.dismissWithAnimation();
+
+                                }
+                            })
+                            .show();
+
+                    return;
+                }
+
+
+
                 Intent intent = new Intent(GetServiciesActivity.this,GetServicies2Activity.class);
+                intent.putExtra("fecha",txtdia.getText().toString());
+                intent.putExtra("hora", list_horario.get(horario.getSelectedItemPosition()));
                 startActivity(intent);
             }
         });
