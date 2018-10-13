@@ -195,41 +195,17 @@ public class GetServicies2Activity extends AppCompatActivity {
 
 
 
-                                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-
-
-                                            btnLocation.setText(Constants.AESDecryptEntity(mObj.getString("nombre_ubicacion")));
-                                            btnConctat.setText(Constants.AESDecryptEntity(mObj.getString("nombre_contacto")));
-
-                                            id_ubicacion= Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("id_ubicacion")));
-                                            id_contacto= Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("id_contacto")));
-
-
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-
-                                    }
-                                });
-
-
-
-
-
+                                show(mObj);
 
                                 pDialog.dismiss();
-
-
-
-
 
                             }else
                             {
                                 pDialog.dismiss();
 
+                                JSONArray mObjResp = res.getJSONArray("data");
+                                final JSONObject mObj = mObjResp.getJSONObject(0);
+                                show(mObj);
 
                                 pDialog = new SweetAlertDialog(GetServicies2Activity.this, SweetAlertDialog.ERROR_TYPE);
                                 pDialog.setTitleText(getResources().getString(R.string.app_name));
@@ -332,7 +308,33 @@ public class GetServicies2Activity extends AppCompatActivity {
         }
     }//onActivityResult
 
+    private void show(final JSONObject mObj){
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                try {
 
+
+                   if(!mObj.getString("id_contacto").equals("")) {
+                       btnConctat.setText(Constants.AESDecryptEntity(mObj.getString("nombre_contacto")));
+                       id_contacto = Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("id_contacto")));
+                   }
+                    if(!mObj.getString("id_ubicacion").equals("")) {
+                        id_ubicacion = Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("id_ubicacion")));
+                        btnLocation.setText(Constants.AESDecryptEntity(mObj.getString("nombre_ubicacion")));
+                    }
+
+
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+    }
 
 
 }

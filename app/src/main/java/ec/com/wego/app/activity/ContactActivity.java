@@ -123,7 +123,20 @@ public class ContactActivity extends AppCompatActivity {
             if(extras != null) {
 
                 select = Integer.parseInt(extras.getString("select"));
+                if(select==1){
+                    pDialog= new SweetAlertDialog(ContactActivity.this, SweetAlertDialog.ERROR_TYPE);
+                    pDialog.setTitleText(getResources().getString(R.string.app_name));
+                    pDialog.setContentText(getResources().getString(R.string.select_contacto));
+                    pDialog.setConfirmText(getResources().getString(R.string.ok));
+                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+                        }
+                    });
+                    pDialog.show();
 
+                }
             }
         }
 

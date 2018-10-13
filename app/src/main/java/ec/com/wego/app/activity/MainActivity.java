@@ -309,11 +309,13 @@ public class MainActivity extends AppCompatActivity {
                         case 3:
 
                             intent = new Intent(MainActivity.this,LocationActivity.class);
+                            intent.putExtra("select","0");
                             startActivity(intent);
 
                             break;
                         case 4:
                             intent = new Intent(MainActivity.this,ContactActivity.class);
+                            intent.putExtra("select","0");
                             startActivity(intent);
 
                             break;
