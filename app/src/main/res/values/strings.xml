@@ -116,6 +116,9 @@
     <string name="error_dia">Seleccione el dia</string>
     <string name="select_location">Seleccione una localización o en su defecto ingrese una nueva </string>
     <string name="select_contacto">Seleccione un contacto o en su defecto ingrese uno nuevo </string>
+    <string name="select_imagen">Por favor seleccione 2 imagenes</string>
+    <string name="select_location2">Seleccione una localización</string>
+    <string name="select_contacto2">Seleccione un contacto</string>
 
 
     <string name="default_notification_channel_id">1000005</string>

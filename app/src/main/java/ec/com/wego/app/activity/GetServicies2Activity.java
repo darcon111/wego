@@ -53,11 +53,11 @@ public class GetServicies2Activity extends AppCompatActivity {
     private AppPreferences app;
     private Toolbar toolbar;
     private String TAG = GetServiciesActivity.class.getName();
-    private Button btnLocation,btnConctat,btnPhoto;
+    private Button btnLocation,btnConctat,btnPhoto,btncontinuar;
     private TextView txtDia, txtRango;
     private SweetAlertDialog pDialog;
-    private int id_ubicacion;
-    private int id_contacto;
+    private int id_ubicacion=0;
+    private int id_contacto=0;
     private int ubicacion = 205;
     private int contacto = 206;
 
@@ -91,6 +91,8 @@ public class GetServicies2Activity extends AppCompatActivity {
         btnLocation=(Button) findViewById(R.id.btnLocation);
         btnPhoto=(Button) findViewById(R.id.btnPhoto);
         btnConctat=(Button) findViewById(R.id.btnConctat);
+        btncontinuar=(Button) findViewById(R.id.btncontinuar);
+
         txtDia=(TextView) findViewById(R.id.txtDia);
         txtRango=(TextView) findViewById(R.id.txtRango);
 
@@ -138,6 +140,53 @@ public class GetServicies2Activity extends AppCompatActivity {
         });
 
         dataTask();
+
+        btncontinuar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String message = "";
+                if(id_contacto==0)
+                {
+                    message += getResources().getString(R.string.select_location2)+ "\n";
+                }
+                if(id_ubicacion==0)
+                {
+                    message += getResources().getString(R.string.select_contacto2)+ "\n";
+                }
+                if(PhotoActivity.image1.equals("") || PhotoActivity.image1.equals("")){
+                    message += getResources().getString(R.string.select_imagen);
+                }
+                if(!message.equals("")){
+                    pDialog = new SweetAlertDialog(GetServicies2Activity.this, SweetAlertDialog.WARNING_TYPE);
+                    pDialog.setTitleText(getResources().getString(R.string.app_name));
+                    pDialog.setContentText(message);
+                    pDialog.setConfirmText(getResources().getString(R.string.ok));
+                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+
+                        }
+                    });
+                    pDialog.show();
+                }else
+                {
+                    pDialog = new SweetAlertDialog(GetServicies2Activity.this, SweetAlertDialog.WARNING_TYPE);
+                    pDialog.setTitleText(getResources().getString(R.string.app_name));
+                    pDialog.setContentText("");
+                    pDialog.setConfirmText("falta");
+                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+
+                        }
+                    });
+                    pDialog.show();
+                }
+
+            }
+        });
 
 
     }
@@ -207,7 +256,7 @@ public class GetServicies2Activity extends AppCompatActivity {
                                 final JSONObject mObj = mObjResp.getJSONObject(0);
                                 show(mObj);
 
-                                pDialog = new SweetAlertDialog(GetServicies2Activity.this, SweetAlertDialog.ERROR_TYPE);
+                                pDialog = new SweetAlertDialog(GetServicies2Activity.this, SweetAlertDialog.WARNING_TYPE);
                                 pDialog.setTitleText(getResources().getString(R.string.app_name));
                                 pDialog.setContentText(res.getString("message"));
                                 pDialog.setConfirmText(getResources().getString(R.string.ok));
@@ -215,7 +264,7 @@ public class GetServicies2Activity extends AppCompatActivity {
                                     @Override
                                     public void onClick(SweetAlertDialog sDialog) {
                                         sDialog.dismissWithAnimation();
-                                        finish();
+
                                     }
                                 });
                                 pDialog.show();

@@ -18,6 +18,7 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +28,8 @@ import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 import com.vansuita.pickimage.listeners.IPickResult;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import ec.com.wego.app.R;
 import ec.com.wego.app.config.Constants;
 
@@ -50,9 +53,11 @@ public class PhotoActivity extends AppCompatActivity implements
     private File outPutFile = null;
     private String mCurrentPhotoPath;
     private Bitmap bitmap;
-    private String image = "";
+    public static String image1 = "",image2="";
     private ImageView img1,img2;
     private Integer select=0;
+    private Button btncontinuar;
+    private SweetAlertDialog pDialog;
 
 
 
@@ -102,9 +107,41 @@ public class PhotoActivity extends AppCompatActivity implements
 
             }
         });
+        btncontinuar=(Button) findViewById(R.id.btncontinuar);
 
+        btncontinuar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(image1.equals("") || image2.equals(""))
+                {
+                    pDialog = new SweetAlertDialog(PhotoActivity.this, SweetAlertDialog.WARNING_TYPE);
+                    pDialog.setTitleText(getResources().getString(R.string.app_name));
+                    pDialog.setContentText(getResources().getString(R.string.select_imagen));
+                    pDialog.setConfirmText(getResources().getString(R.string.ok));
+                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
 
+                        }
+                    });
+                    pDialog.show();
+                }else
+                {
+                    finish();
+                }
 
+            }
+        });
+
+        if(!image1.equals("")){
+
+            img1.setImageBitmap(Constants.decodeBase64(image1));
+
+        }
+        if(!image2.equals("")){
+            img2.setImageBitmap(Constants.decodeBase64(image2));
+        }
 
 
     }
@@ -271,13 +308,15 @@ public class PhotoActivity extends AppCompatActivity implements
 
                     //imagen.setImageBitmap(bitmap);
 
-                    image = Constants.getStringImage(bitmap);
+
 
                     if(select==1){
                         img1.setImageBitmap(bitmap);
+                        image1 = Constants.getStringImage(bitmap);
                     }else if(select==2)
                     {
                         img2.setImageBitmap(bitmap);
+                        image2 = Constants.getStringImage(bitmap);
                     }
 
 

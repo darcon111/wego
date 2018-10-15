@@ -124,7 +124,7 @@ public class ContactActivity extends AppCompatActivity {
 
                 select = Integer.parseInt(extras.getString("select"));
                 if(select==1){
-                    pDialog= new SweetAlertDialog(ContactActivity.this, SweetAlertDialog.ERROR_TYPE);
+                    pDialog= new SweetAlertDialog(ContactActivity.this, SweetAlertDialog.WARNING_TYPE);
                     pDialog.setTitleText(getResources().getString(R.string.app_name));
                     pDialog.setContentText(getResources().getString(R.string.select_contacto));
                     pDialog.setConfirmText(getResources().getString(R.string.ok));
