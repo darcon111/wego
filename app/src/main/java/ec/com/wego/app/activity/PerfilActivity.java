@@ -56,6 +56,12 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.vansuita.pickimage.bean.PickResult;
 import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
@@ -66,6 +72,7 @@ import ec.com.wego.app.clases.EstadoCivil;
 import ec.com.wego.app.clases.Identificacion;
 import ec.com.wego.app.clases.ImagenCircular.CircleImageView;
 import ec.com.wego.app.clases.Spinner.MaterialSpinner;
+import ec.com.wego.app.clases.User;
 import ec.com.wego.app.config.AppPreferences;
 import ec.com.wego.app.config.Constants;
 
@@ -151,6 +158,8 @@ public class PerfilActivity extends AppCompatActivity implements
     private boolean changeEmail=false;
     private String provider="";
 
+    private static DatabaseReference databaseUsers;
+
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -165,7 +174,7 @@ public class PerfilActivity extends AppCompatActivity implements
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         app = new AppPreferences(getApplicationContext());
-
+        databaseUsers = FirebaseDatabase.getInstance().getReference("users");
 
         List<String> listProvider =user.getProviders();
         provider=listProvider.get(0);
@@ -216,6 +225,11 @@ public class PerfilActivity extends AppCompatActivity implements
         estado_civil=(MaterialSpinner) findViewById(R.id.estado_civil);
         ciudad=(MaterialSpinner) findViewById(R.id.ciudad);
         genero=(MaterialSpinner) findViewById(R.id.genero);
+
+
+
+
+
 
         save=(Button) findViewById(R.id.save);
 
@@ -364,6 +378,8 @@ public class PerfilActivity extends AppCompatActivity implements
                 return false;
             }
         });
+
+        dataTask();
 
 
     }
@@ -524,7 +540,7 @@ public class PerfilActivity extends AppCompatActivity implements
                                             if(!imagen.trim().equals(""))
                                             {
                                                 Glide.with(getApplicationContext())
-                                                        .load(imagen)
+                                                        .load(image)
                                                         .fitCenter()
                                                         .into(img);
                                             }
@@ -957,7 +973,7 @@ public class PerfilActivity extends AppCompatActivity implements
                     pDialog.dismiss();
 
                     telefono=txttelefono.getText().toString().trim();
-
+                    MainActivity.validate_phone = 0;
                     change_password();
 
                 }
@@ -1059,6 +1075,15 @@ public class PerfilActivity extends AppCompatActivity implements
                                 JSONArray mObjResp = res.getJSONArray("data");
 
                                 app.setUser(txtNombres.getText().toString().trim()+" "+ txtApellidos.getText().toString().trim());
+
+                                databaseUsers.child(MainActivity.Utemp.getId()).child("name").setValue(txtNombres.getText().toString().trim());
+                                databaseUsers.child(MainActivity.Utemp.getId()).child("lastname").setValue(txtApellidos.getText().toString().trim());
+
+                                if(!image.equals("")) {
+                                    databaseUsers.child(MainActivity.Utemp.getId()).child("url_imagen").setValue(image);
+                                }
+
+
 
                                 app.setActualizar("1");
 
@@ -1363,8 +1388,12 @@ public class PerfilActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        finish();
+
+
+        validate();
+
+
+
 
     }
 
@@ -1372,9 +1401,10 @@ public class PerfilActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                //onBackPressed();
-                finish();
-                //------------
+
+                validate();
+
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -1385,9 +1415,34 @@ public class PerfilActivity extends AppCompatActivity implements
     public void onResume() {
         super.onResume();
 
-        dataTask();
+
 
     }
+
+    private  void validate()
+    {
+        if(MainActivity.validate_phone == 0 ) {
+            super.onBackPressed();
+            finish();
+        }else{
+
+            pDialog= new SweetAlertDialog(PerfilActivity.this, SweetAlertDialog.ERROR_TYPE);
+            pDialog.setTitleText(getResources().getString(R.string.app_name));
+            pDialog.setContentText(getResources().getString(R.string.complete_perfil));
+            pDialog.setConfirmText(getResources().getString(R.string.ok));
+            pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                @Override
+                public void onClick(SweetAlertDialog sDialog) {
+                    sDialog.dismissWithAnimation();
+
+                }
+            });
+            pDialog.show();
+
+        }
+    }
+
+
 
 
 }

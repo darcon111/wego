@@ -16,6 +16,7 @@ import ec.com.wego.app.R;
 import ec.com.wego.app.activity.MainActivity;
 import ec.com.wego.app.activity.PerfilActivity;
 import ec.com.wego.app.clases.ImagenCircular.CircleImageView;
+import ec.com.wego.app.config.Constants;
 
 
 /**
@@ -152,16 +153,21 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         }
         else{
 
-            holder.profile.setImageResource(profile);           // Similarly we set the resources for header view
-            if(imagen_url!=null){
-                if(!imagen_url.equals("")) {
-                    Glide.with(mContext).load(imagen_url)
-                            .thumbnail(1.0f)
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(holder.profile);
-                }else
-                {
+            holder.profile.setImageResource(profile);
+            // Similarly we set the resources for header view
+            if(imagen_url!=null) {
+                if (!imagen_url.equals("")) {
+                    if (imagen_url.contains("http:")) {
+                        Glide.with(mContext).load(imagen_url)
+                                .thumbnail(1.0f)
+                                .crossFade()
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .into(holder.profile);
+                    } else {
+                        holder.profile.setImageBitmap(Constants.decodeBase64(imagen_url));
+
+                    }
+                } else {
                     holder.profile.setImageResource(R.drawable.ic_user);
                 }
             }

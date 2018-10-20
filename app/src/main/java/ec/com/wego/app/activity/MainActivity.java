@@ -91,9 +91,11 @@ public class MainActivity extends AppCompatActivity {
     private SweetAlertDialog pDialog;
     private AppPreferences appPreferences;
     private DatabaseReference databaseUsers;
-    private User Utemp;
+    public static User Utemp;
     private String provider;
     private String imagen;
+    public static int validate_phone = 1;
+    private int ejecutar  = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,13 +169,13 @@ public class MainActivity extends AppCompatActivity {
 
         mListCategories = new ArrayList<Categories>();
 
-        validaTask(user.getEmail());
+
 
         databaseUsers = FirebaseDatabase.getInstance().getReference("users");
         databaseUsers.keepSynced(true);
 
         Query userquery = databaseUsers
-                .orderByChild("firebaseId").equalTo(user.getUid());
+                .orderByChild("email").equalTo(user.getEmail());
 
         userquery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -239,6 +241,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 menu();
+                validaTask(user.getEmail());
             }
 
             @Override
@@ -387,7 +390,7 @@ public class MainActivity extends AppCompatActivity {
         pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(Color.parseColor(getString(R.string.colorAccent)));
         pDialog.setTitleText(getResources().getString(R.string.auth));
-        pDialog.setCancelable(true);
+        pDialog.setCancelable(false);
         pDialog.show();
 
         Constants.deleteCache(MainActivity.this);
@@ -439,32 +442,47 @@ public class MainActivity extends AppCompatActivity {
                                         //appPreferences.setActualizar("1");
 
                                     //}
+                                    mObj = mObjResp[0].getJSONObject(3);
 
 
-                                    for (int x = 3; x< mObjResp[0].length(); x++)
-                                    {
-                                        mObj = mObjResp[0].getJSONObject(x);
+                                    final String phone =  mObj.getString("telefono");
 
-                                        //mListCategories.add(new Categories(Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("id"))),Constants.AESDecryptEntity(mObj.getString("nombre")),Constants.AESDecryptEntity(mObj.getString("descripcion")),mObj.getString("imagen")));
-                                        //mCategoriesAdapter.notifyItemChanged(x-2);
+                                    pDialog.dismiss();
 
-                                        final JSONObject finalMObj = mObj;
-                                        final int finalX = x;
-                                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                try {
-                                                    mListCategories.add(new Categories(Integer.parseInt(Constants.AESDecryptEntity(finalMObj.getString("id"))),Constants.AESDecryptEntity(finalMObj.getString("nombre")),Constants.AESDecryptEntity(finalMObj.getString("descripcion")), finalMObj.getString("imagen")));
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
+
+
+
+                                        for (int x = 4; x < mObjResp[0].length(); x++) {
+                                            mObj = mObjResp[0].getJSONObject(x);
+
+                                            //mListCategories.add(new Categories(Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("id"))),Constants.AESDecryptEntity(mObj.getString("nombre")),Constants.AESDecryptEntity(mObj.getString("descripcion")),mObj.getString("imagen")));
+                                            //mCategoriesAdapter.notifyItemChanged(x-2);
+
+                                            final JSONObject finalMObj = mObj;
+                                            final int finalX = x;
+                                            final int cantidad =  mObjResp[0].length();
+                                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    try {
+                                                        mListCategories.add(new Categories(Integer.parseInt(Constants.AESDecryptEntity(finalMObj.getString("id"))), Constants.AESDecryptEntity(finalMObj.getString("nombre")), Constants.AESDecryptEntity(finalMObj.getString("descripcion")), finalMObj.getString("imagen")));
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+
+                                                    if( finalX == (cantidad -1)){
+                                                        message(phone);
+                                                    }
+
+
                                                 }
-                                                mCategoriesAdapter.notifyItemChanged(finalX -3);
-                                            }
-                                        });
+                                            });
 
 
-                                    }
 
+
+
+                                        }
 
 
 
@@ -685,6 +703,53 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    public void message(String phone)
+    {
+
+        if(phone.equals(""))
+        {
+            pDialog= new SweetAlertDialog(MainActivity.this, SweetAlertDialog.WARNING_TYPE);
+            pDialog.setTitleText(getResources().getString(R.string.app_name));
+            pDialog.setContentText(getResources().getString(R.string.complete_perfil));
+            pDialog.setConfirmText(getResources().getString(R.string.ok));
+            pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                @Override
+                public void onClick(SweetAlertDialog sDialog) {
+                    sDialog.dismiss();
+                    Intent intent = new Intent(MainActivity.this, PerfilActivity.class);
+                    startActivity(intent);
+
+                }
+            });
+            pDialog.show();
+
+        }else
+        {
+            MainActivity.validate_phone = 0;
+        }
+
+        mCategoriesAdapter.notifyDataSetChanged();
+
+    }
+
+    private void carga()
+    {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+
+
+                if(MainActivity.validate_phone==1)
+                {
+                    Intent intent = new Intent(MainActivity.this, PerfilActivity.class);
+                    startActivity(intent);
+                }
+                mCategoriesAdapter.notifyDataSetChanged();
+
+            }
+        });
 
 
     }
