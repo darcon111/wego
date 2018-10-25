@@ -60,6 +60,7 @@ public class GetServicies2Activity extends AppCompatActivity {
     private int id_contacto=0;
     private int ubicacion = 205;
     private int contacto = 206;
+    private Bundle extras;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +98,7 @@ public class GetServicies2Activity extends AppCompatActivity {
         txtRango=(TextView) findViewById(R.id.txtRango);
 
         if (savedInstanceState == null) {
-            Bundle extras = getIntent().getExtras();
+            extras = getIntent().getExtras();
             if(extras != null) {
                 txtRango.setText(txtRango.getText().toString()+" : "+ extras.getString("hora"));
                 txtDia.setText(txtDia.getText().toString()+" : "+ extras.getString("fecha"));
@@ -171,18 +172,14 @@ public class GetServicies2Activity extends AppCompatActivity {
                     pDialog.show();
                 }else
                 {
-                    pDialog = new SweetAlertDialog(GetServicies2Activity.this, SweetAlertDialog.WARNING_TYPE);
-                    pDialog.setTitleText(getResources().getString(R.string.app_name));
-                    pDialog.setContentText("");
-                    pDialog.setConfirmText("falta");
-                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sDialog) {
-                            sDialog.dismissWithAnimation();
 
-                        }
-                    });
-                    pDialog.show();
+
+
+                    Intent intent = new Intent(GetServicies2Activity.this,PayPal.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    intent.putExtra("costo", extras.getString("costo"));
+                    startActivity(intent);
+                    finish();
+
                 }
 
             }

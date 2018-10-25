@@ -14,6 +14,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -47,6 +49,7 @@ import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -90,12 +93,12 @@ import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class AddLocationActivity extends AppCompatActivity {
+public class AddLocationActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private Toolbar toolbar;
     private GoogleMap map;
     private MapView mapView;
-    private String lat,log;
+    private String lat=null,log=null;
     private GPS gps = null;
     private String TAG = MyLocationsActivity.class.getName();
     private SweetAlertDialog pDialog;
@@ -138,7 +141,12 @@ public class AddLocationActivity extends AppCompatActivity {
             getSupportActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_arrow));
         }
 
-
+        googleApiClient = new GoogleApiClient.Builder(getApplicationContext())
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+        googleApiClient.connect();
 
         gps = new GPS(AddLocationActivity.this);
         if (!gps.canGetLocation()) {
@@ -146,7 +154,6 @@ public class AddLocationActivity extends AppCompatActivity {
             settingsrequest();
         }else {
             //gps.city();
-
             lat = String.valueOf(gps.getLatitude());
             log = String.valueOf(gps.getLongitude());
         }
@@ -279,30 +286,6 @@ public class AddLocationActivity extends AppCompatActivity {
                 mapUiSettings.setMapToolbarEnabled(false);
 
 
-                /*map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-
-                    @Override
-                    public void onMapClick(LatLng point) {
-                        // TODO Auto-generated method stub
-
-                        map.clear();
-                        map.addMarker(new MarkerOptions().position(point));
-                        lat=String.valueOf(point.latitude);
-                        log=String.valueOf(point.longitude);
-
-                        LatLng posicion = new LatLng(Double.parseDouble(lat), Double.parseDouble(log));
-
-                        CameraPosition cameraPosition = new CameraPosition.Builder()
-                                .target(posicion)      // Sets the center of the map to Mountain View
-                                .zoom(15)                   // Sets the zoom
-                                .bearing(90)                // Sets the orientation of the camera to east
-                                .tilt(30)                   // Sets the tilt of the camera to 30 degrees
-                                .build();                   // Creates a CameraPosition from the builder
-                        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-                    }
-                });*/
-
 
                 map.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
                     @Override
@@ -356,7 +339,9 @@ public class AddLocationActivity extends AppCompatActivity {
                     changePosition();
 
                 }else{
-                    changePosition();
+                    if(lat!=null) {
+                        changePosition();
+                    }
                 }
 
 
@@ -800,4 +785,18 @@ public class AddLocationActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
 }

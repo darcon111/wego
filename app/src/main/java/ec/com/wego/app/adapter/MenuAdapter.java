@@ -157,7 +157,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
             // Similarly we set the resources for header view
             if(imagen_url!=null) {
                 if (!imagen_url.equals("")) {
-                    if (imagen_url.contains("http:")) {
+                    if (imagen_url.contains("htt")) {
                         Glide.with(mContext).load(imagen_url)
                                 .thumbnail(1.0f)
                                 .crossFade()

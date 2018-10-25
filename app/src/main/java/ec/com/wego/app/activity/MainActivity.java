@@ -22,7 +22,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +50,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import ec.com.wego.app.R;
 import ec.com.wego.app.adapter.MenuAdapter;
@@ -77,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle mDrawerToggle;
 
     private int PROFILE = R.drawable.ic_user;
-    //private RecyclerView.Adapter mAdapter;
     private MenuAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private DrawerLayout Drawer;
@@ -86,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
      private static FirebaseUser user;
 
     private ArrayList<Categories> mListCategories;
+    private ArrayList<Categories> mListCategoriesFilter;
     private CategoriesRecycleAdapter mCategoriesAdapter;
 
     private SweetAlertDialog pDialog;
@@ -95,7 +99,8 @@ public class MainActivity extends AppCompatActivity {
     private String provider;
     private String imagen;
     public static int validate_phone = 1;
-    private int ejecutar  = 0;
+
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
         appPreferences.setActualizar("1");
 
 
+
+
         mCategoriesRecyclerView = (RecyclerView) findViewById(R.id.servicies_recycler_view);
         // Create a grid layout with two columns
 
@@ -168,14 +175,22 @@ public class MainActivity extends AppCompatActivity {
         mCategoriesRecyclerView.setAdapter(mCategoriesAdapter);
 
         mListCategories = new ArrayList<Categories>();
+        mListCategoriesFilter = new ArrayList<Categories>();
 
 
 
         databaseUsers = FirebaseDatabase.getInstance().getReference("users");
-        databaseUsers.keepSynced(true);
+        //databaseUsers.keepSynced(true);
 
         Query userquery = databaseUsers
                 .orderByChild("email").equalTo(user.getEmail());
+
+        pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+        pDialog.getProgressHelper().setBarColor(Color.parseColor(getString(R.string.colorAccent)));
+        pDialog.setTitleText(getResources().getString(R.string.auth));
+        pDialog.setCancelable(false);
+        pDialog.show();
+
 
         userquery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -247,6 +262,39 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e(TAG, "onCancelled", databaseError.toException());
+            }
+        });
+
+
+        /*update user */
+        if (appPreferences.getFlag().equals("1")) {
+            if(Utemp!=null) {
+                databaseUsers.child(Utemp.getId()).child("firebase_code").setValue(appPreferences.getFirebasetoken());
+                appPreferences.setFlag("0");
+            }
+        }
+
+        //tema
+        FirebaseMessaging.getInstance().subscribeToTopic("wegoBoletin");
+
+
+        searchView=(SearchView) findViewById(R.id.busqueda);
+
+        //busqueda
+        // listening to search query text change
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // filter recycler view when query submitted
+                mCategoriesAdapter.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                // filter recycler view when text is changed
+                mCategoriesAdapter.getFilter().filter(query);
+                return false;
             }
         });
 
@@ -387,11 +435,7 @@ public class MainActivity extends AppCompatActivity {
 
         final JSONObject[] res = {null};
         //Showing the progress dialog
-        pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-        pDialog.getProgressHelper().setBarColor(Color.parseColor(getString(R.string.colorAccent)));
-        pDialog.setTitleText(getResources().getString(R.string.auth));
-        pDialog.setCancelable(false);
-        pDialog.show();
+
 
         Constants.deleteCache(MainActivity.this);
 
@@ -600,8 +644,9 @@ public class MainActivity extends AppCompatActivity {
 
     /* adapter*/
 
-    public class CategoriesRecycleAdapter extends RecyclerView.Adapter<CategoriesRecycleHolder> {
+    public class CategoriesRecycleAdapter extends RecyclerView.Adapter<CategoriesRecycleHolder> implements Filterable {
         private int lastPosition = -1;
+
 
         @Override
         public CategoriesRecycleHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -615,10 +660,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final CategoriesRecycleHolder productHolder, final int i) {
 
-            productHolder.mTitle.setText(mListCategories.get(i).getNombre());
+            productHolder.mTitle.setText(mListCategoriesFilter.get(i).getNombre());
 
             Glide.with(MainActivity.this)
-                    .load(mListCategories.get(i).getImagen())
+                    .load(mListCategoriesFilter.get(i).getImagen())
                     .fitCenter()
                     .into(productHolder.mImage);
 
@@ -627,7 +672,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
 
                     Intent intent= new Intent(MainActivity.this,ServiciesActivity.class);
-                    intent.putExtra("categoria",String.valueOf(mListCategories.get(i).getId()));
+                    intent.putExtra("categoria",String.valueOf(mListCategoriesFilter.get(i).getId()));
                     startActivity(intent);
 
                 }
@@ -644,13 +689,13 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return mListCategories.size();
+            return mListCategoriesFilter.size();
         }
 
         public void removeItem(int position) {
-            mListCategories.remove(position);
+            mListCategoriesFilter.remove(position);
             notifyItemRemoved(position);
-            notifyItemRangeChanged(position, mListCategories.size());
+            notifyItemRangeChanged(position, mListCategoriesFilter.size());
             //Signal.get().reset();
 
 
@@ -670,6 +715,44 @@ public class MainActivity extends AppCompatActivity {
                 lastPosition = position;
             }
         }
+
+
+        @Override
+        public Filter getFilter() {
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence charSequence) {
+                    String charString = charSequence.toString();
+                    if (charString.isEmpty()) {
+                        mListCategoriesFilter = mListCategories;
+                    } else {
+                        ArrayList<Categories> filteredList = new ArrayList<>();
+                        for (Categories row : mListCategories) {
+
+                            // name match condition. this might differ depending on your requirement
+                            // here we are looking for name or phone number match
+                            if (row.getNombre().toLowerCase().contains(charString.toLowerCase()) || row.getDescripcion().contains(charSequence)) {
+                                filteredList.add(row);
+                            }
+                        }
+
+                        mListCategoriesFilter = filteredList;
+                    }
+
+                    FilterResults filterResults = new FilterResults();
+                    filterResults.values = mListCategoriesFilter;
+                    return filterResults;
+                }
+
+                @Override
+                protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                    mListCategoriesFilter = (ArrayList<Categories>) filterResults.values;
+                    notifyDataSetChanged();
+                }
+            };
+        }
+
+
 
 
     }
@@ -697,6 +780,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(mAdapter!=null) {
                 mAdapter.setName(appPreferences.getUser());
+                mAdapter.setImagen(Utemp.getUrl_imagen());
                 mAdapter.notifyItemChanged(0);
                 appPreferences.setActualizar("0");
             }
@@ -729,30 +813,12 @@ public class MainActivity extends AppCompatActivity {
         {
             MainActivity.validate_phone = 0;
         }
-
+        mListCategoriesFilter = mListCategories;
         mCategoriesAdapter.notifyDataSetChanged();
 
     }
 
-    private void carga()
-    {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
 
-
-                if(MainActivity.validate_phone==1)
-                {
-                    Intent intent = new Intent(MainActivity.this, PerfilActivity.class);
-                    startActivity(intent);
-                }
-                mCategoriesAdapter.notifyDataSetChanged();
-
-            }
-        });
-
-
-    }
 
 
 

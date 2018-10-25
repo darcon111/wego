@@ -123,20 +123,7 @@ public class ContactActivity extends AppCompatActivity {
             if(extras != null) {
 
                 select = Integer.parseInt(extras.getString("select"));
-                if(select==1){
-                    pDialog= new SweetAlertDialog(ContactActivity.this, SweetAlertDialog.WARNING_TYPE);
-                    pDialog.setTitleText(getResources().getString(R.string.app_name));
-                    pDialog.setContentText(getResources().getString(R.string.select_contacto));
-                    pDialog.setConfirmText(getResources().getString(R.string.ok));
-                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sDialog) {
-                            sDialog.dismissWithAnimation();
-                        }
-                    });
-                    pDialog.show();
 
-                }
             }
         }
 
@@ -250,6 +237,26 @@ public class ContactActivity extends AppCompatActivity {
                                                     e.printStackTrace();
                                                 }
                                                 mContactoAdapter.notifyItemChanged(finalX);
+
+                                                //mensaje que viene del select servicio
+                                                if(select==1){
+                                                    pDialog= new SweetAlertDialog(ContactActivity.this, SweetAlertDialog.WARNING_TYPE);
+                                                    pDialog.setTitleText(getResources().getString(R.string.app_name));
+                                                    pDialog.setContentText(getResources().getString(R.string.select_contacto));
+                                                    pDialog.setConfirmText(getResources().getString(R.string.ok));
+                                                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                        @Override
+                                                        public void onClick(SweetAlertDialog sDialog) {
+                                                            sDialog.dismissWithAnimation();
+                                                        }
+                                                    });
+                                                    pDialog.show();
+
+                                                    select=0;
+
+                                                }
+
+
                                             }
                                         });
 

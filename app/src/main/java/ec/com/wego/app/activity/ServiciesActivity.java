@@ -294,6 +294,7 @@ public class ServiciesActivity extends AppCompatActivity {
                     Intent intent = new Intent(ServiciesActivity.this,ServiciesCaractActivity.class);
                     intent.putExtra("servicioid",String.valueOf(mListServicies.get(i).getId()));
                     startActivity(intent);
+                    finish();
                 }
             });
 

@@ -93,11 +93,14 @@ public class GetServiciesActivity extends AppCompatActivity implements
                 }
 
 
-
+                Bundle extras = getIntent().getExtras();
                 Intent intent = new Intent(GetServiciesActivity.this,GetServicies2Activity.class);
                 intent.putExtra("fecha",txtdia.getText().toString());
                 intent.putExtra("hora", list_horario.get(horario.getSelectedItemPosition()));
+                intent.putExtra("servicio_id", extras.getString("servicio_id"));
+                intent.putExtra("costo", extras.getString("costo"));
                 startActivity(intent);
+                finish();
             }
         });
 

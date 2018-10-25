@@ -534,16 +534,17 @@ public class PerfilActivity extends AppCompatActivity implements
 
 
 
+                                            //String imagen= mObj.getString("imagen");
 
-                                            String imagen= mObj.getString("imagen");
-
-                                            if(!imagen.trim().equals(""))
+                                            if(! MainActivity.Utemp.getUrl_imagen().trim().equals(""))
                                             {
                                                 Glide.with(getApplicationContext())
-                                                        .load(image)
+                                                        .load(MainActivity.Utemp.getUrl_imagen())
                                                         .fitCenter()
                                                         .into(img);
                                             }
+
+
 
 
 
@@ -1073,14 +1074,18 @@ public class PerfilActivity extends AppCompatActivity implements
 
                             if(res.getString("result").equals("OK") ){
                                 JSONArray mObjResp = res.getJSONArray("data");
+                                JSONObject mObj = mObjResp.getJSONObject(0);
 
                                 app.setUser(txtNombres.getText().toString().trim()+" "+ txtApellidos.getText().toString().trim());
 
                                 databaseUsers.child(MainActivity.Utemp.getId()).child("name").setValue(txtNombres.getText().toString().trim());
                                 databaseUsers.child(MainActivity.Utemp.getId()).child("lastname").setValue(txtApellidos.getText().toString().trim());
 
+
                                 if(!image.equals("")) {
-                                    databaseUsers.child(MainActivity.Utemp.getId()).child("url_imagen").setValue(image);
+                                    databaseUsers.child(MainActivity.Utemp.getId()).child("url_imagen").setValue(mObj.getString("imagen"));
+
+                                    MainActivity.Utemp.setUrl_imagen(mObj.getString("imagen"));
                                 }
 
 

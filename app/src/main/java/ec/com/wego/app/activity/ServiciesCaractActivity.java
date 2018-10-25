@@ -304,7 +304,9 @@ public class ServiciesCaractActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         Intent intent = new Intent(ServiciesCaractActivity.this, GetServiciesActivity.class);
                         intent.putExtra("servicio_id", String.valueOf(mListServiciesData.get(i).getId()));
+                        intent.putExtra("costo", String.valueOf(mListServiciesData.get(i).getCosto()));
                         startActivity(intent);
+                        finish();
                     }
                 });
 

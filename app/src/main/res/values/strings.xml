@@ -119,8 +119,9 @@
     <string name="select_imagen">Por favor seleccione 2 imagenes</string>
     <string name="select_location2">Seleccione una localización</string>
     <string name="select_contacto2">Seleccione un contacto</string>
-
     <string name="complete_perfil">Por favor ingrese su número telefono</string>
+    <string name="Text_Payment_to">Pago de servicio</string>
+    <string name="gracias_pago">Gracias por su pago!!!</string>
 
 
     <string name="default_notification_channel_id">1000005</string>
