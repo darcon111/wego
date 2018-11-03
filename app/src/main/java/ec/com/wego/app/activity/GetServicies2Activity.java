@@ -145,6 +145,10 @@ public class GetServicies2Activity extends AppCompatActivity {
         btncontinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+
+
                 String message = "";
                 if(id_contacto==0)
                 {
@@ -175,10 +179,10 @@ public class GetServicies2Activity extends AppCompatActivity {
 
 
 
-                    Intent intent = new Intent(GetServicies2Activity.this,PayPal.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    Intent intent = new Intent(GetServicies2Activity.this,PayPal.class);
                     intent.putExtra("costo", extras.getString("costo"));
                     startActivity(intent);
-                    finish();
+
 
                 }
 

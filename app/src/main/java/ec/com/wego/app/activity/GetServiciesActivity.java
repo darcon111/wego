@@ -100,7 +100,7 @@ public class GetServiciesActivity extends AppCompatActivity implements
                 intent.putExtra("servicio_id", extras.getString("servicio_id"));
                 intent.putExtra("costo", extras.getString("costo"));
                 startActivity(intent);
-                finish();
+
             }
         });
 

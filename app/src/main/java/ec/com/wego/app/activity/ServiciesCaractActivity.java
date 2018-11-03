@@ -194,7 +194,7 @@ public class ServiciesCaractActivity extends AppCompatActivity {
                                         sDialog.dismissWithAnimation();
                                         FirebaseAuth.getInstance().signOut();
                                         LoginManager.getInstance().logOut();
-                                        finish();
+
                                     }
                                 });
                                 pDialog.show();
@@ -306,7 +306,7 @@ public class ServiciesCaractActivity extends AppCompatActivity {
                         intent.putExtra("servicio_id", String.valueOf(mListServiciesData.get(i).getId()));
                         intent.putExtra("costo", String.valueOf(mListServiciesData.get(i).getCosto()));
                         startActivity(intent);
-                        finish();
+
                     }
                 });
 

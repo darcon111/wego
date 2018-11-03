@@ -233,7 +233,7 @@ public class LocationActivity extends AppCompatActivity {
                                                 mLocationAdapter.notifyItemChanged(finalX);
 
                                                 if(select==1){
-                                                    select=0;
+                                                    select++;
                                                     pDialog= new SweetAlertDialog(LocationActivity.this, SweetAlertDialog.WARNING_TYPE);
                                                     pDialog.setTitleText(getResources().getString(R.string.app_name));
                                                     pDialog.setContentText(getResources().getString(R.string.select_location));
@@ -245,8 +245,6 @@ public class LocationActivity extends AppCompatActivity {
                                                         }
                                                     });
                                                     pDialog.show();
-
-
                                                 }
 
 
@@ -808,7 +806,7 @@ public class LocationActivity extends AppCompatActivity {
                 });
             }
 
-            if(select==1){
+            if(select>=1){
                 productHolder.mContenedor.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -817,7 +815,7 @@ public class LocationActivity extends AppCompatActivity {
                         returnIntent.putExtra("id_ubicacion",String.valueOf(mListLocations.get(i).getId()));
                         returnIntent.putExtra("ubicacion",String.valueOf(mListLocations.get(i).getNombre()));
                         setResult(Activity.RESULT_OK,returnIntent);
-                        finish();
+
 
                     }
                 });
