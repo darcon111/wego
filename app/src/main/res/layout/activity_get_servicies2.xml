@@ -32,7 +32,7 @@
     </android.support.v7.widget.Toolbar>
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/txtServicio"
         style="@style/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
         app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4">
+        app:layout_constraintTop_toBottomOf="@+id/txtServicio">
 
         <TextView
             android:id="@+id/txtDia"
@@ -67,6 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
+            android:gravity="center"
             android:text="@string/dia" />
 
         <TextView
@@ -76,7 +77,18 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
+            android:gravity="center"
             android:text="@string/rango" />
+
+        <TextView
+            android:id="@+id/txtTotal"
+            style="@style/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:text="@string/total"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -90,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/button2"
                 android:drawableLeft="@drawable/ic_location3"
-                android:drawableRight="@drawable/ic_sync"
+                android:drawableRight="@drawable/ic_arrow_right"
                 android:text="@string/ubicacion" />
 
             <Button
@@ -100,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/button2"
                 android:drawableLeft="@drawable/ic_assignment"
-                android:drawableRight="@drawable/ic_sync"
+                android:drawableRight="@drawable/ic_arrow_right"
                 android:text="@string/contacto" />
 
             <Button
@@ -110,7 +122,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/button2"
                 android:drawableLeft="@drawable/ic_insert_photo"
-                android:drawableRight="@drawable/ic_add"
+                android:drawableRight="@drawable/ic_arrow_right"
                 android:text="@string/foto" />
         </LinearLayout>
 
@@ -135,9 +147,8 @@
             style="@style/button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:background="@drawable/button1"
-            android:text="@string/continuar" />
+            android:text="@string/pagar" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

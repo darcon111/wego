@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -62,6 +63,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import ec.com.wego.app.R;
 import ec.com.wego.app.config.AppPreferences;
 import ec.com.wego.app.config.ConfigPay;
+import ec.com.wego.app.config.Constants;
 
 
 public class PayPal extends AppCompatActivity  {
@@ -191,6 +193,8 @@ public class PayPal extends AppCompatActivity  {
                             public void onClick(SweetAlertDialog sDialog) {
                                 sDialog.dismissWithAnimation();
 
+
+
                                 finish();
 
                             }
@@ -207,12 +211,141 @@ public class PayPal extends AppCompatActivity  {
                 }
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Log.i("paymentExample", "The user canceled.");
+                finish();
+
             } else if (resultCode == PaymentActivity.RESULT_EXTRAS_INVALID) {
                 Log.i("paymentExample", "An invalid Payment or PayPalConfiguration was submitted. Please see the docs.");
             }
         }
 
     }
+
+    private void save()
+    {
+        //Showing the progress dialog
+        pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+        pDialog.getProgressHelper().setBarColor(Color.parseColor(getString(R.string.colorAccent)));
+        pDialog.setTitleText(getResources().getString(R.string.auth));
+        pDialog.setCancelable(true);
+        pDialog.show();
+
+        Constants.deleteCache(getApplicationContext());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"save_servicio/format/json",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String responde) {
+                        Log.d(TAG, responde);
+
+                        //Showing toast message of the response
+
+                        JSONObject res= null;
+                        try {
+                            res = new JSONObject(responde);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        try {
+
+                            if(res.getString("result").equals("OK") ){
+                                JSONArray mObjResp = res.getJSONArray("data");
+                                final JSONObject mObj = mObjResp.getJSONObject(0);
+
+
+
+                                show(mObj);
+
+                                pDialog.dismiss();
+
+                            }else
+                            {
+                                pDialog.dismiss();
+
+                                JSONArray mObjResp = res.getJSONArray("data");
+                                final JSONObject mObj = mObjResp.getJSONObject(0);
+                                show(mObj);
+
+                                pDialog = new SweetAlertDialog(GetServicies2Activity.this, SweetAlertDialog.WARNING_TYPE);
+                                pDialog.setTitleText(getResources().getString(R.string.app_name));
+                                pDialog.setContentText(res.getString("message"));
+                                pDialog.setConfirmText(getResources().getString(R.string.ok));
+                                pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sDialog) {
+                                        sDialog.dismissWithAnimation();
+
+                                    }
+                                });
+                                pDialog.show();
+
+
+
+
+                            }
+                        } catch (JSONException e) {
+                            pDialog.dismiss();
+                            Log.d(TAG, e.toString());
+                            e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        //Dismissing the progress dialog
+                        pDialog.dismiss();
+
+                        if(volleyError.networkResponse != null && volleyError.networkResponse.data != null){
+                            VolleyError error = new VolleyError(new String(volleyError.networkResponse.data));
+                            volleyError = error;
+                        }
+
+                        //Showing toast
+                        Log.d(TAG, volleyError.toString());
+                        Toast.makeText(PayPal.this, volleyError.toString(), Toast.LENGTH_LONG).show();
+
+
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+
+                //Creating parameters
+                Map<String,String> params = new Hashtable<String, String>();
+
+                //Adding parameters
+
+                try {
+                    params.put("userid", Constants.AESEncryptEntity(app.getUserId()));
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                //returning parameters
+                return params;
+            }
+        };
+
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                50000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        RequestQueue volleyQueue = Volley.newRequestQueue(this);
+        volleyQueue.add(stringRequest);
+        DiskBasedCache cache = new DiskBasedCache(getCacheDir(), 500 * 1024 * 1024);
+        volleyQueue = new RequestQueue(cache, new BasicNetwork(new HurlStack()));
+        volleyQueue.start();
+    }
+
 
 
 

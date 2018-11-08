@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.provider.ContactsContract;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,10 +24,14 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import ec.com.wego.app.R;
 import ec.com.wego.app.clases.Spinner.MaterialSpinner;
 import ec.com.wego.app.config.AppPreferences;
+import ec.com.wego.app.config.Constants;
+import ec.com.wego.app.holder.Serviciescarac;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-
+import java.util.Date;
 
 
 public class GetServiciesActivity extends AppCompatActivity implements
@@ -41,6 +46,7 @@ public class GetServiciesActivity extends AppCompatActivity implements
     private Button btnContinuar;
 
     private ArrayList<String> list_horario;
+    private int idServicio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +103,12 @@ public class GetServiciesActivity extends AppCompatActivity implements
                 Intent intent = new Intent(GetServiciesActivity.this,GetServicies2Activity.class);
                 intent.putExtra("fecha",txtdia.getText().toString());
                 intent.putExtra("hora", list_horario.get(horario.getSelectedItemPosition()));
-                intent.putExtra("servicio_id", extras.getString("servicio_id"));
-                intent.putExtra("costo", extras.getString("costo"));
+
+                Serviciescarac servicio = ServiciesCaractActivity.mListServicies.get(Integer.parseInt(extras.getString("id")));
+
+                intent.putExtra("servicio_id", servicio.getServicio_id());
+                intent.putExtra("costo", servicio.getCosto());
+                intent.putExtra("id",extras.getString("id"));
                 startActivity(intent);
                 finish();
             }
@@ -106,22 +116,7 @@ public class GetServiciesActivity extends AppCompatActivity implements
 
         list_horario = new ArrayList<String>();
 
-        int hora = 7;
-        for (int x = 7;x<17;x++)
-        {
-            String temp = String.valueOf(x) + horario(x) + " - "+String.valueOf(x+1)+horario(x+1);
-            list_horario.add(temp);
-        }
 
-        dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_horario);
-
-        // Drop down layout style - list view with radio button
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
-        horario.setAdapter(dataAdapter);
-
-        horario.setSelection(1);
 
 
 
@@ -147,6 +142,11 @@ public class GetServiciesActivity extends AppCompatActivity implements
                 return false;
             }
         });
+
+        Bundle extras = getIntent().getExtras();
+
+        idServicio= Integer.parseInt(extras.getString("id"));
+
     }
 
     @Override
@@ -156,7 +156,114 @@ public class GetServiciesActivity extends AppCompatActivity implements
         String day = dayOfMonth <= 9 ? "0" + dayOfMonth : "" + dayOfMonth;
 
         String date = year + "-" + month + "-" + day;
-        txtdia.setText(date);
+
+
+        Date fecha = new Date();
+        DateFormat hourdateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String fecha_hoy =  hourdateFormat.format(fecha);
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(fecha);
+        cal.add(Calendar.DAY_OF_MONTH, 1);
+
+        String fecha_mañana = hourdateFormat.format(cal.getTime());
+
+
+
+        //si la fecha actual es mayor que la escogida da error
+        if(Constants.compareDate(date,fecha_hoy))
+        {
+            new SweetAlertDialog(GetServiciesActivity.this, SweetAlertDialog.ERROR_TYPE)
+                    .setTitleText(getResources().getString(R.string.app_name))
+                    .setContentText(getResources().getString(R.string.error_fecha_select))
+                    .setConfirmText(getResources().getString(R.string.ok))
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+
+                        }
+                    })
+                    .show();
+        }else
+        {
+            //si la fecha escogida no es mayor que mañana tomar en consideracion el tiempo
+            if(Constants.compareDate(date,fecha_mañana))
+            {
+                //tiempo
+                list_horario.clear();
+
+                cal.setTime(fecha);
+                cal.add(Calendar.MINUTE, ServiciesCaractActivity.mListServicies.get(idServicio).getTiempo());
+
+                DateFormat formathora = new SimpleDateFormat("HH:mm");
+                String hora_posible =  formathora.format(cal.getTime());
+
+                String[] temp_hora= hora_posible.split(":");
+                int hora = 7;
+                if(Integer.parseInt(temp_hora[1])>1)
+                {
+                    hora = Integer.parseInt(temp_hora[0])+1;
+                }else
+                {
+                    hora = Integer.parseInt(temp_hora[0]);
+                }
+
+                if(hora >=20)
+                {
+                    new SweetAlertDialog(GetServiciesActivity.this, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText(getResources().getString(R.string.app_name))
+                            .setContentText(getResources().getString(R.string.error_fecha_hora))
+                            .setConfirmText(getResources().getString(R.string.ok))
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sDialog) {
+                                    sDialog.dismissWithAnimation();
+
+                                }
+                            })
+                            .show();
+
+                    return;
+
+                }
+
+                for (int x = hora ;x<20;x++)
+                {
+                    String temp = String.valueOf(x) + horario(x) + " - "+String.valueOf(x+1)+horario(x+1);
+                    list_horario.add(temp);
+                }
+
+            }else{
+
+                int hora = 7;
+                list_horario.clear();
+                for (int x = 7;x<17;x++)
+                {
+                    String temp = String.valueOf(x) + horario(x) + " - "+String.valueOf(x+1)+horario(x+1);
+                    list_horario.add(temp);
+                }
+
+            }
+
+            dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_horario);
+
+            // Drop down layout style - list view with radio button
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            // attaching data adapter to spinner
+            horario.setAdapter(dataAdapter);
+
+            horario.setSelection(0);
+
+
+            txtdia.setText(date);
+        }
+
+
+
+
+
     }
 
     @Override

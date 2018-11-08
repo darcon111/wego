@@ -230,10 +230,10 @@ public class LocationActivity extends AppCompatActivity {
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
                                                 }
-                                                mLocationAdapter.notifyItemChanged(finalX);
+
 
                                                 if(select==1){
-                                                    select=0;
+                                                    select++;
                                                     pDialog= new SweetAlertDialog(LocationActivity.this, SweetAlertDialog.WARNING_TYPE);
                                                     pDialog.setTitleText(getResources().getString(R.string.app_name));
                                                     pDialog.setContentText(getResources().getString(R.string.select_location));
@@ -248,7 +248,7 @@ public class LocationActivity extends AppCompatActivity {
 
 
                                                 }
-
+                                                mLocationAdapter.notifyItemChanged(finalX);
 
 
                                             }
@@ -806,9 +806,12 @@ public class LocationActivity extends AppCompatActivity {
 
                     }
                 });
+            }else
+            {
+                productHolder.mImage.setVisibility(View.GONE);
             }
 
-            if(select==1){
+            if(select>=1){
                 productHolder.mContenedor.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

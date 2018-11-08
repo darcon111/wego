@@ -54,7 +54,7 @@ public class GetServicies2Activity extends AppCompatActivity {
     private Toolbar toolbar;
     private String TAG = GetServiciesActivity.class.getName();
     private Button btnLocation,btnConctat,btnPhoto,btncontinuar;
-    private TextView txtDia, txtRango;
+    private TextView txtDia, txtRango,txtTotal,txtServicio;
     private SweetAlertDialog pDialog;
     private int id_ubicacion=0;
     private int id_contacto=0;
@@ -76,7 +76,7 @@ public class GetServicies2Activity extends AppCompatActivity {
 
         TextView title = (TextView) findViewById(R.id.txtTitle);
 
-        title.setText(getString(R.string.app_name));
+        title.setText(getString(R.string.infor));
 
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -96,12 +96,17 @@ public class GetServicies2Activity extends AppCompatActivity {
 
         txtDia=(TextView) findViewById(R.id.txtDia);
         txtRango=(TextView) findViewById(R.id.txtRango);
+        txtTotal=(TextView) findViewById(R.id.txtTotal);
+        txtServicio=(TextView) findViewById(R.id.txtServicio);
 
         if (savedInstanceState == null) {
             extras = getIntent().getExtras();
             if(extras != null) {
                 txtRango.setText(txtRango.getText().toString()+" : "+ extras.getString("hora"));
                 txtDia.setText(txtDia.getText().toString()+" : "+ extras.getString("fecha"));
+                txtTotal.setText(txtTotal.getText().toString()+" : $"+ extras.getString("costo"));
+                txtServicio.setText(ServiciesActivity.servicio_name);
+
             }
         }
 
@@ -154,9 +159,9 @@ public class GetServicies2Activity extends AppCompatActivity {
                 {
                     message += getResources().getString(R.string.select_contacto2)+ "\n";
                 }
-                if(PhotoActivity.image1.equals("") || PhotoActivity.image1.equals("")){
+                /*if(PhotoActivity.image1.equals("") || PhotoActivity.image1.equals("")){
                     message += getResources().getString(R.string.select_imagen);
-                }
+                }*/
                 if(!message.equals("")){
                     pDialog = new SweetAlertDialog(GetServicies2Activity.this, SweetAlertDialog.WARNING_TYPE);
                     pDialog.setTitleText(getResources().getString(R.string.app_name));
@@ -175,7 +180,7 @@ public class GetServicies2Activity extends AppCompatActivity {
 
 
 
-                    Intent intent = new Intent(GetServicies2Activity.this,PayPal.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    Intent intent = new Intent(GetServicies2Activity.this,PayPal.class);
                     intent.putExtra("costo", extras.getString("costo"));
                     startActivity(intent);
                     finish();

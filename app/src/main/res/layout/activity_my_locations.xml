@@ -30,7 +30,7 @@
     </android.support.v7.widget.Toolbar>
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/txtServicio"
         style="@style/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/txtServicio" />
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/mapView"

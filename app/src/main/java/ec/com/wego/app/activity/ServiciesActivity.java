@@ -63,6 +63,8 @@ public class ServiciesActivity extends AppCompatActivity {
     private ServiciesRecycleAdapter mServiciesAdapter;
 
     private SweetAlertDialog pDialog;
+    public static  String servicio_name="";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -291,6 +293,7 @@ public class ServiciesActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
 
+                    servicio_name = mListServicies.get(i).getNombre();
                     Intent intent = new Intent(ServiciesActivity.this,ServiciesCaractActivity.class);
                     intent.putExtra("servicioid",String.valueOf(mListServicies.get(i).getId()));
                     startActivity(intent);

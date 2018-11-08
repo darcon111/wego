@@ -114,6 +114,8 @@
     <string name="error_contacto_telefono2">Ingrese un número de teléfono</string>
     <string name="error_ubicacion">Seleccione un ubicación valida</string>
     <string name="error_dia">Seleccione el dia</string>
+    <string name="error_fecha_select">Seleccione una fecha mayor o igual a la actual</string>
+    <string name="error_fecha_hora">No se puede escoger el servicio porque pasa el tiempo de servicio</string>
     <string name="select_location">Seleccione una localización o en su defecto ingrese una nueva </string>
     <string name="select_contacto">Seleccione un contacto o en su defecto ingrese uno nuevo </string>
     <string name="select_imagen">Por favor seleccione 2 imagenes</string>
@@ -122,6 +124,9 @@
     <string name="complete_perfil">Por favor ingrese su número telefono</string>
     <string name="Text_Payment_to">Pago de servicio</string>
     <string name="gracias_pago">Gracias por su pago!!!</string>
+    <string name="total">Total</string>
+    <string name="pagar">Pagar</string>
+    <string name="infor">Información</string>
 
 
     <string name="default_notification_channel_id">1000005</string>

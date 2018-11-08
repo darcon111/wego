@@ -286,11 +286,11 @@ public class Constants {
 
     public static boolean compareDate(String date1,String date2)
     {
-        SimpleDateFormat sdt=new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat sdt=new SimpleDateFormat("yyyy-MM-dd");
         try {
             Date d1=sdt.parse(date1);
             Date d2=sdt.parse(date2);
-            if(d2.getTime()>=d1.getTime())
+            if(d2.getTime()>d1.getTime())
             {
                 return true;
             }

@@ -65,7 +65,7 @@ public class ServiciesCaractActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private RecyclerView mServiciesRecyclerView;
     private String TAG = ServiciesActivity.class.getName();
-    private ArrayList<Serviciescarac> mListServicies;
+    public static ArrayList<Serviciescarac> mListServicies;
     private ServiciesRecycleAdapter mServiciesAdapter;
 
     private SweetAlertDialog pDialog;
@@ -155,7 +155,8 @@ public class ServiciesCaractActivity extends AppCompatActivity {
                                         {
                                             try {
                                                 mObj[0] = mObjResp.getJSONObject(x);
-                                                mListServicies.add(new Serviciescarac(Integer.parseInt(/*Constants.AESDecryptEntity(*/mObj[0].getString("id")/*)*/),/*Constants.AESDecryptEntity(*/mObj[0].getString("nombre")/*)*/,/*Constants.AESDecryptEntity(*/mObj[0].getString("descripcion")/*)*/,/*Constants.AESDecryptEntity(*/mObj[0].getString("respt")/*)*/,/*Constants.AESDecryptEntity(*/mObj[0].getString("respc")/*)*/,/*Constants.AESDecryptEntity(*/mObj[0].getString("costo")/*)*/,Integer.parseInt(mObj[0].getString("ref_id")),Integer.parseInt(mObj[0].getString("servicio_id")) ));
+
+                                                mListServicies.add( new Serviciescarac(Integer.parseInt(mObj[0].getString("id")),mObj[0].getString("nombre"),mObj[0].getString("descripcion"),mObj[0].getString("respt"),mObj[0].getString("respc"),mObj[0].getString("costo"),Integer.parseInt(mObj[0].getString("ref_id")),Integer.parseInt(mObj[0].getString("servicio_id")),Integer.parseInt(mObj[0].getString("tiempo"))));
 
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
@@ -296,15 +297,14 @@ public class ServiciesCaractActivity extends AppCompatActivity {
 
                 productHolder.mTitle.setText(mListServiciesData.get(i).getNombre());
                 productHolder.mTxtrespotd.setText(mListServiciesData.get(i).getRespt());
-                productHolder.mTxtrespcd.setText(mListServiciesData.get(i).getRespc());
+                productHolder.mTxtrespcd.setText(mListServiciesData.get(i).getRespc()+ "   tiempo:"+ mListServiciesData.get(i).getTiempo());
                 productHolder.mTxtcosto.setText("Costo $" + mListServiciesData.get(i).getCosto());
 
                 productHolder.mBtnobtener.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(ServiciesCaractActivity.this, GetServiciesActivity.class);
-                        intent.putExtra("servicio_id", String.valueOf(mListServiciesData.get(i).getId()));
-                        intent.putExtra("costo", String.valueOf(mListServiciesData.get(i).getCosto()));
+                        intent.putExtra("id", String.valueOf(i));
                         startActivity(intent);
                         finish();
                     }

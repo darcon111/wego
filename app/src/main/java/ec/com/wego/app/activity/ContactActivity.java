@@ -236,7 +236,6 @@ public class ContactActivity extends AppCompatActivity {
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
                                                 }
-                                                mContactoAdapter.notifyItemChanged(finalX);
 
                                                 //mensaje que viene del select servicio
                                                 if(select==1){
@@ -252,9 +251,13 @@ public class ContactActivity extends AppCompatActivity {
                                                     });
                                                     pDialog.show();
 
-                                                    select=0;
+                                                    select++;
 
                                                 }
+
+                                                mContactoAdapter.notifyItemChanged(finalX);
+
+
 
 
                                             }
@@ -815,7 +818,7 @@ public class ContactActivity extends AppCompatActivity {
                 productHolder.mImage.setVisibility(View.GONE);
             }
 
-            if(select==1){
+            if(select>=1){
                 productHolder.mContenedor.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
