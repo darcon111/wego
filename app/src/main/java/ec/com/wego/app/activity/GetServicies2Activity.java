@@ -182,6 +182,13 @@ public class GetServicies2Activity extends AppCompatActivity {
 
                     Intent intent = new Intent(GetServicies2Activity.this,PayPal.class);
                     intent.putExtra("costo", extras.getString("costo"));
+                    intent.putExtra("fecha", extras.getString("fecha"));
+                    intent.putExtra("hora", extras.getString("hora"));
+                    intent.putExtra("servicio_id", extras.getString("servicio_id"));
+                    intent.putExtra("id_contacto", String.valueOf(id_contacto));
+                    intent.putExtra("id_ubicacion", String.valueOf(id_ubicacion));
+
+
                     startActivity(intent);
                     finish();
 

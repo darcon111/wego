@@ -106,7 +106,7 @@ public class GetServiciesActivity extends AppCompatActivity implements
 
                 Serviciescarac servicio = ServiciesCaractActivity.mListServicies.get(Integer.parseInt(extras.getString("id")));
 
-                intent.putExtra("servicio_id", servicio.getServicio_id());
+                intent.putExtra("servicio_id", String.valueOf(servicio.getId()));
                 intent.putExtra("costo", servicio.getCosto());
                 intent.putExtra("id",extras.getString("id"));
                 startActivity(intent);

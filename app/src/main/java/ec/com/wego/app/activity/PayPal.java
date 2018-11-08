@@ -72,12 +72,9 @@ public class PayPal extends AppCompatActivity  {
     private JSONArray result;
     private SweetAlertDialog pDialog;
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-    SimpleDateFormat dateHora = new SimpleDateFormat("hh:mm", Locale.getDefault());
-    Date date = new Date();
 
-    String fecha = dateFormat.format(date);
-    String UserId,DoctorId,SpecialtyId;
+    //parametros
+    String costo,fecha,hora,servicio_id,contacto,ubicacion;
 
     //Paypal intent request code to track onActivityResult method
     public static final int PAYPAL_REQUEST_CODE = 123;
@@ -92,8 +89,6 @@ public class PayPal extends AppCompatActivity  {
             .merchantName("Wego")
             .merchantPrivacyPolicyUri(Uri.parse("https://www.example.com/privacy"))
             .merchantUserAgreementUri(Uri.parse("https://www.example.com/legal"));
-     String Cost = " ";
-     String Name = " ";
 
      AppPreferences app;
 
@@ -131,8 +126,13 @@ public class PayPal extends AppCompatActivity  {
         if (bundle != null){
 
             // TODO: parametros que se reciben
-            Name = app.getUser();
-            Cost = getIntent().getStringExtra("costo");
+
+            costo = getIntent().getStringExtra("costo");
+            fecha = getIntent().getStringExtra("fecha");
+            hora = getIntent().getStringExtra("hora");
+            servicio_id = getIntent().getStringExtra("servicio_id");
+            contacto = getIntent().getStringExtra("id_contacto");
+            ubicacion = getIntent().getStringExtra("id_ubicacion");
 
 
         }else {
@@ -148,8 +148,8 @@ public class PayPal extends AppCompatActivity  {
 //        paymentAmount = editTextAmount.getText().toString();
 
         //Creating a paypalpayment
-        PayPalPayment payment = new PayPalPayment(new BigDecimal(String.valueOf(Cost)), "USD",
-                getResources().getString(R.string.Text_Payment_to)+ " " + Name ,
+        PayPalPayment payment = new PayPalPayment(new BigDecimal(String.valueOf(costo)), "USD",
+                getResources().getString(R.string.Text_Payment_to)+ " "  ,
                 PayPalPayment.PAYMENT_INTENT_SALE);
 
         //Creating Paypal Payment activity intent
@@ -193,9 +193,7 @@ public class PayPal extends AppCompatActivity  {
                             public void onClick(SweetAlertDialog sDialog) {
                                 sDialog.dismissWithAnimation();
 
-
-
-                                finish();
+                                save();
 
                             }
                         });
@@ -254,7 +252,7 @@ public class PayPal extends AppCompatActivity  {
 
 
 
-                                show(mObj);
+
 
                                 pDialog.dismiss();
 
@@ -264,9 +262,9 @@ public class PayPal extends AppCompatActivity  {
 
                                 JSONArray mObjResp = res.getJSONArray("data");
                                 final JSONObject mObj = mObjResp.getJSONObject(0);
-                                show(mObj);
 
-                                pDialog = new SweetAlertDialog(GetServicies2Activity.this, SweetAlertDialog.WARNING_TYPE);
+
+                                pDialog = new SweetAlertDialog(PayPal.this, SweetAlertDialog.WARNING_TYPE);
                                 pDialog.setTitleText(getResources().getString(R.string.app_name));
                                 pDialog.setContentText(res.getString("message"));
                                 pDialog.setConfirmText(getResources().getString(R.string.ok));
@@ -274,7 +272,7 @@ public class PayPal extends AppCompatActivity  {
                                     @Override
                                     public void onClick(SweetAlertDialog sDialog) {
                                         sDialog.dismissWithAnimation();
-
+                                         finish();
                                     }
                                 });
                                 pDialog.show();
@@ -322,8 +320,15 @@ public class PayPal extends AppCompatActivity  {
                 //Adding parameters
 
                 try {
+
                     params.put("userid", Constants.AESEncryptEntity(app.getUserId()));
-                    
+                    params.put("costo", Constants.AESEncryptEntity(costo));
+                    params.put("fecha", Constants.AESEncryptEntity(fecha));
+                    params.put("hora", Constants.AESEncryptEntity(hora));
+                    params.put("servicio_id", Constants.AESEncryptEntity(servicio_id));
+                    params.put("contacto", Constants.AESEncryptEntity(contacto));
+                    params.put("ubicacion", Constants.AESEncryptEntity(ubicacion));
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
