@@ -150,6 +150,10 @@ public class GetServicies2Activity extends AppCompatActivity {
         btncontinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+
+
                 String message = "";
                 if(id_contacto==0)
                 {
@@ -190,7 +194,7 @@ public class GetServicies2Activity extends AppCompatActivity {
 
 
                     startActivity(intent);
-                    finish();
+
 
                 }
 

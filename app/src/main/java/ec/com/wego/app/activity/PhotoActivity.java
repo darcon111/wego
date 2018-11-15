@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.vansuita.pickimage.bean.PickResult;
 import com.vansuita.pickimage.bundle.PickSetup;
+import com.vansuita.pickimage.dialog.PickImageBaseDialog;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 import com.vansuita.pickimage.listeners.IPickResult;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
@@ -191,6 +192,8 @@ public class PhotoActivity extends AppCompatActivity implements
                 .setCameraIcon(R.drawable.ic_photo_camera_black_24dp)
 
         ).show(getSupportFragmentManager());
+
+
 
 
     }
