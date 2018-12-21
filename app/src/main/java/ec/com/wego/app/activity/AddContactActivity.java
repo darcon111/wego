@@ -159,7 +159,7 @@ public class AddContactActivity extends AppCompatActivity {
         pDialog.setCancelable(true);
         pDialog.show();
 
-        Constants.deleteCache(getApplicationContext());
+        //Constants.deleteCache(getApplicationContext());
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"save_contacto/format/json",
                 new Response.Listener<String>() {
@@ -263,11 +263,11 @@ public class AddContactActivity extends AppCompatActivity {
                 //Adding parameters
 
                 try {
-                    params.put("persona_id", Constants.AESEncryptEntity(app.getUserId()));
-                    params.put("nombre", Constants.AESEncryptEntity(txtNombre.getText().toString()));
-                    params.put("valor", Constants.AESEncryptEntity(txtTelefono.getText().toString()));
-                    params.put("origen_crea", Constants.AESEncryptEntity(Constants.getIPAddress(true)));
-                    params.put("id", Constants.AESEncryptEntity(String.valueOf(id)));
+                    params.put("persona_id", Constants.Encrypt(app.getUserId()));
+                    params.put("nombre", Constants.Encrypt(txtNombre.getText().toString()));
+                    params.put("valor", Constants.Encrypt(txtTelefono.getText().toString()));
+                    params.put("origen_crea", Constants.Encrypt(Constants.getIPAddress(true)));
+                    params.put("id", Constants.Encrypt(String.valueOf(id)));
 
 
                 } catch (Exception e) {

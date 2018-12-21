@@ -48,7 +48,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import tgio.rncryptor.RNCryptorNative;
+import ec.com.wego.app.clases.CryptLib;
+
 
 public class Constants {
 
@@ -497,7 +498,23 @@ public class Constants {
     }
 
 
-    public static String AESEncryptEntity(String data) throws Exception {
+    public static String Encrypt(String data) throws Exception {
+        CryptLib cryptLib = new CryptLib();
+
+        return cryptLib.encryptPlainTextWithRandomIV(data, CRYPTO_KEY);
+
+    }
+
+    public static String Decrypt (String data) throws Exception {
+
+        CryptLib cryptLib = new CryptLib();
+
+        return cryptLib.decryptCipherTextWithRandomIV(data,CRYPTO_KEY);
+    }
+
+
+
+    /*public static String AESEncryptEntity(String data) throws Exception {
 
         if(DEVELOPER){
             return data;
@@ -530,7 +547,7 @@ public class Constants {
                 return e.toString();
             }
         }
-    }
+    }*/
 
     public static boolean isHasJson(JSONObject object,String test) {
         try {

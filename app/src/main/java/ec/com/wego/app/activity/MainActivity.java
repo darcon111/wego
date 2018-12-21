@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout Drawer;
     private String TAG = MainActivity.class.getName();
     private String name="Usuario";
-     private static FirebaseUser user;
+    private static FirebaseUser user;
 
     private ArrayList<Categories> mListCategories;
     private ArrayList<Categories> mListCategoriesFilter;
@@ -458,7 +458,7 @@ public class MainActivity extends AppCompatActivity {
 
                         try {
 
-                            if(Constants.AESDecryptEntity(res[0].getString("result")).equals("OK") ){
+                            if(Constants.Decrypt(res[0].getString("result")).equals("OK") ){
 
 
 
@@ -474,15 +474,15 @@ public class MainActivity extends AppCompatActivity {
                                     mObjResp[0] = res[0].getJSONArray("data");
                                     JSONObject mObj = mObjResp[0].getJSONObject(0);
 
-                                    appPreferences.setUserId(Constants.AESDecryptEntity(mObj.getString("id_persona")));
+                                    appPreferences.setUserId(Constants.Decrypt(mObj.getString("id_persona")));
                                     mObj = mObjResp[0].getJSONObject(1);
                                     appPreferences.setImagen(mObj.getString("imagen"));
 
                                     mObj = mObjResp[0].getJSONObject(2);
 
-                                    //if(!appPreferences.getUser().equals(Constants.AESDecryptEntity(mObj.getString("nombres"))))
+                                    //if(!appPreferences.getUser().equals(Constants.Decrypt(mObj.getString("nombres"))))
                                     //{
-                                        appPreferences.setUser(Constants.AESDecryptEntity(mObj.getString("nombres")));
+                                        appPreferences.setUser(Constants.Decrypt(mObj.getString("nombres")));
                                         //appPreferences.setActualizar("1");
 
                                     //}
@@ -499,7 +499,7 @@ public class MainActivity extends AppCompatActivity {
                                         for (int x = 4; x < mObjResp[0].length(); x++) {
                                             mObj = mObjResp[0].getJSONObject(x);
 
-                                            //mListCategories.add(new Categories(Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("id"))),Constants.AESDecryptEntity(mObj.getString("nombre")),Constants.AESDecryptEntity(mObj.getString("descripcion")),mObj.getString("imagen")));
+                                            //mListCategories.add(new Categories(Integer.parseInt(Constants.Decrypt(mObj.getString("id"))),Constants.Decrypt(mObj.getString("nombre")),Constants.Decrypt(mObj.getString("descripcion")),mObj.getString("imagen")));
                                             //mCategoriesAdapter.notifyItemChanged(x-2);
 
                                             final JSONObject finalMObj = mObj;
@@ -509,7 +509,7 @@ public class MainActivity extends AppCompatActivity {
                                                 @Override
                                                 public void run() {
                                                     try {
-                                                        mListCategories.add(new Categories(Integer.parseInt(Constants.AESDecryptEntity(finalMObj.getString("id"))), Constants.AESDecryptEntity(finalMObj.getString("nombre")), Constants.AESDecryptEntity(finalMObj.getString("descripcion")), finalMObj.getString("imagen")));
+                                                        mListCategories.add(new Categories(Integer.parseInt(Constants.Decrypt(finalMObj.getString("id"))), Constants.Decrypt(finalMObj.getString("nombre")), Constants.Decrypt(finalMObj.getString("descripcion")), finalMObj.getString("imagen")));
                                                     } catch (Exception e) {
                                                         e.printStackTrace();
                                                     }
@@ -556,7 +556,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 pDialog= new SweetAlertDialog(MainActivity.this, SweetAlertDialog.ERROR_TYPE);
                                 pDialog.setTitleText(getResources().getString(R.string.app_name));
-                                pDialog.setContentText(Constants.AESDecryptEntity(res[0].getString("message")));
+                                pDialog.setContentText(Constants.Decrypt(res[0].getString("message")));
                                 pDialog.setConfirmText(getResources().getString(R.string.ok));
                                 pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                             @Override
@@ -612,7 +612,7 @@ public class MainActivity extends AppCompatActivity {
                 //Adding parameters
 
                 try {
-                    params.put("email", Constants.AESEncryptEntity(finalEmail));
+                    params.put("email", Constants.Encrypt(finalEmail));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

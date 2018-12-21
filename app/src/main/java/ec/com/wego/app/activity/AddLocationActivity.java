@@ -644,7 +644,7 @@ public class AddLocationActivity extends AppCompatActivity implements GoogleApiC
         pDialog.setCancelable(true);
         pDialog.show();
 
-        Constants.deleteCache(getApplicationContext());
+        //Constants.deleteCache(getApplicationContext());
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"save_ubicacion/format/json",
                 new Response.Listener<String>() {
@@ -748,15 +748,15 @@ public class AddLocationActivity extends AppCompatActivity implements GoogleApiC
                 //Adding parameters
 
                 try {
-                    params.put("persona_id", Constants.AESEncryptEntity(app.getUserId()));
-                    params.put("nombre", Constants.AESEncryptEntity(txtNombre.getText().toString().trim()));
-                    params.put("direccion", Constants.AESEncryptEntity(txtBusqueda.getText().toString().trim()));
-                    params.put("piso", Constants.AESEncryptEntity(txtPiso.getText().toString().trim()));
-                    params.put("departamento", Constants.AESEncryptEntity(txtDepartamento.getText().toString().trim()));
-                    params.put("latitud", Constants.AESEncryptEntity(lat));
-                    params.put("longitud", Constants.AESEncryptEntity(log));
-                    params.put("origen_crea", Constants.AESEncryptEntity(Constants.getIPAddress(true)));
-                    params.put("id", Constants.AESEncryptEntity(String.valueOf(id)));
+                    params.put("persona_id", Constants.Encrypt(app.getUserId()));
+                    params.put("nombre", Constants.Encrypt(txtNombre.getText().toString().trim()));
+                    params.put("direccion", Constants.Encrypt(txtBusqueda.getText().toString().trim()));
+                    params.put("piso", Constants.Encrypt(txtPiso.getText().toString().trim()));
+                    params.put("departamento", Constants.Encrypt(txtDepartamento.getText().toString().trim()));
+                    params.put("latitud", Constants.Encrypt(lat));
+                    params.put("longitud", Constants.Encrypt(log));
+                    params.put("origen_crea", Constants.Encrypt(Constants.getIPAddress(true)));
+                    params.put("id", Constants.Encrypt(String.valueOf(id)));
 
 
                 } catch (Exception e) {

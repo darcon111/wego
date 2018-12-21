@@ -232,7 +232,7 @@ public class GetServicies2Activity extends AppCompatActivity {
         pDialog.setCancelable(true);
         pDialog.show();
 
-        Constants.deleteCache(getApplicationContext());
+        //Constants.deleteCache(getApplicationContext());
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"getVisita/format/json",
                 new Response.Listener<String>() {
@@ -325,7 +325,7 @@ public class GetServicies2Activity extends AppCompatActivity {
                 //Adding parameters
 
                 try {
-                    params.put("userid", Constants.AESEncryptEntity(app.getUserId()));
+                    params.put("userid", Constants.Encrypt(app.getUserId()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -378,12 +378,12 @@ public class GetServicies2Activity extends AppCompatActivity {
 
 
                    if(!mObj.getString("id_contacto").equals("")) {
-                       btnConctat.setText(Constants.AESDecryptEntity(mObj.getString("nombre_contacto")));
-                       id_contacto = Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("id_contacto")));
+                       btnConctat.setText(Constants.Decrypt(mObj.getString("nombre_contacto")));
+                       id_contacto = Integer.parseInt(Constants.Decrypt(mObj.getString("id_contacto")));
                    }
                     if(!mObj.getString("id_ubicacion").equals("")) {
-                        id_ubicacion = Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("id_ubicacion")));
-                        btnLocation.setText(Constants.AESDecryptEntity(mObj.getString("nombre_ubicacion")));
+                        id_ubicacion = Integer.parseInt(Constants.Decrypt(mObj.getString("id_ubicacion")));
+                        btnLocation.setText(Constants.Decrypt(mObj.getString("nombre_ubicacion")));
                     }
 
 

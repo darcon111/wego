@@ -229,7 +229,7 @@ public class PayPal extends AppCompatActivity  {
         pDialog.setCancelable(true);
         pDialog.show();
 
-        Constants.deleteCache(getApplicationContext());
+        //Constants.deleteCache(getApplicationContext());
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"save_servicio/format/json",
                 new Response.Listener<String>() {
@@ -323,13 +323,13 @@ public class PayPal extends AppCompatActivity  {
 
                 try {
 
-                    params.put("userid", Constants.AESEncryptEntity(app.getUserId()));
-                    params.put("costo", Constants.AESEncryptEntity(costo));
-                    params.put("fecha", Constants.AESEncryptEntity(fecha));
-                    params.put("hora", Constants.AESEncryptEntity(hora));
-                    params.put("servicio_id", Constants.AESEncryptEntity(servicio_id));
-                    params.put("contacto", Constants.AESEncryptEntity(contacto));
-                    params.put("ubicacion", Constants.AESEncryptEntity(ubicacion));
+                    params.put("userid", Constants.Encrypt(app.getUserId()));
+                    params.put("costo", Constants.Encrypt(costo));
+                    params.put("fecha", Constants.Encrypt(fecha));
+                    params.put("hora", Constants.Encrypt(hora));
+                    params.put("servicio_id", Constants.Encrypt(servicio_id));
+                    params.put("contacto", Constants.Encrypt(contacto));
+                    params.put("ubicacion", Constants.Encrypt(ubicacion));
 
                 } catch (Exception e) {
                     e.printStackTrace();

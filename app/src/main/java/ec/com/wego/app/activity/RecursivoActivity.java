@@ -108,7 +108,7 @@ public class RecursivoActivity extends AppCompatActivity {
         pDialog.setCancelable(true);
         pDialog.show();
 
-        Constants.deleteCache(RecursivoActivity.this);
+        //Constants.deleteCache(RecursivoActivity.this);
 
         final String finalid = id;
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"getServiciosRecur/format/json",
@@ -129,7 +129,7 @@ public class RecursivoActivity extends AppCompatActivity {
 
                         try {
 
-                            if(Constants.AESDecryptEntity(res.getString("result")).equals("OK") ){
+                            if(Constants.Decrypt(res.getString("result")).equals("OK") ){
                                 final JSONArray mObjResp = res.getJSONArray("data");
                                 final JSONObject[] mObj = new JSONObject[1];
 
@@ -143,7 +143,7 @@ public class RecursivoActivity extends AppCompatActivity {
                                         {
                                             try {
                                                 mObj[0] = mObjResp.getJSONObject(x);
-                                                //mListServicies.add(new Serviciescarac(Integer.parseInt(Constants.AESDecryptEntity(mObj[0].getString("id"))),Constants.AESDecryptEntity(mObj[0].getString("nombre")),Constants.AESDecryptEntity(mObj[0].getString("descripcion")),Constants.AESDecryptEntity(mObj[0].getString("respt")),Constants.AESDecryptEntity(mObj[0].getString("respc")),Constants.AESDecryptEntity(mObj[0].getString("costo")),Integer.parseInt(mObj[0].getString("ref"))));
+                                                //mListServicies.add(new Serviciescarac(Integer.parseInt(Constants.Decrypt(mObj[0].getString("id"))),Constants.Decrypt(mObj[0].getString("nombre")),Constants.Decrypt(mObj[0].getString("descripcion")),Constants.Decrypt(mObj[0].getString("respt")),Constants.Decrypt(mObj[0].getString("respc")),Constants.Decrypt(mObj[0].getString("costo")),Integer.parseInt(mObj[0].getString("ref"))));
                                                 mServiciesAdapter.notifyItemChanged(x);
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
@@ -172,7 +172,7 @@ public class RecursivoActivity extends AppCompatActivity {
 
                                 pDialog= new SweetAlertDialog(RecursivoActivity.this, SweetAlertDialog.ERROR_TYPE);
                                 pDialog.setTitleText(getResources().getString(R.string.app_name));
-                                pDialog.setContentText(Constants.AESDecryptEntity(res.getString("message")));
+                                pDialog.setContentText(Constants.Decrypt(res.getString("message")));
                                 pDialog.setConfirmText(getResources().getString(R.string.ok));
                                 pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                     @Override
@@ -228,7 +228,7 @@ public class RecursivoActivity extends AppCompatActivity {
                 //Adding parameters
 
                 try {
-                    params.put("servicio_id", Constants.AESEncryptEntity(finalid));
+                    params.put("servicio_id", Constants.Encrypt(finalid));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

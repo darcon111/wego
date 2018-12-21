@@ -118,7 +118,7 @@ public class ServiciesActivity extends AppCompatActivity {
         pDialog.setCancelable(true);
         pDialog.show();
 
-        Constants.deleteCache(ServiciesActivity.this);
+        //Constants.deleteCache(ServiciesActivity.this);
 
         final String finalid = id;
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"loadServicies/format/json",
@@ -139,7 +139,7 @@ public class ServiciesActivity extends AppCompatActivity {
 
                         try {
 
-                            if(Constants.AESDecryptEntity(res.getString("result")).equals("OK") ){
+                            if(Constants.Decrypt(res.getString("result")).equals("OK") ){
                                 final JSONArray mObjResp = res.getJSONArray("data");
                                 final JSONObject[] mObj = new JSONObject[1];
 
@@ -152,7 +152,7 @@ public class ServiciesActivity extends AppCompatActivity {
                                         {
                                             try {
                                                 mObj[0] = mObjResp.getJSONObject(x);
-                                                mListServicies.add(new Servicies(Integer.parseInt(Constants.AESDecryptEntity(mObj[0].getString("id"))),Constants.AESDecryptEntity(mObj[0].getString("nombre")),Constants.AESDecryptEntity(mObj[0].getString("descripcion")),Constants.AESDecryptEntity(mObj[0].getString("categoria")), mObj[0].getString("imagen")));
+                                                mListServicies.add(new Servicies(Integer.parseInt(Constants.Decrypt(mObj[0].getString("id"))),Constants.Decrypt(mObj[0].getString("nombre")),Constants.Decrypt(mObj[0].getString("descripcion")),Constants.Decrypt(mObj[0].getString("categoria")), mObj[0].getString("imagen")));
                                                 mServiciesAdapter.notifyItemChanged(x);
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
@@ -181,7 +181,7 @@ public class ServiciesActivity extends AppCompatActivity {
 
                                 pDialog= new SweetAlertDialog(ServiciesActivity.this, SweetAlertDialog.ERROR_TYPE);
                                 pDialog.setTitleText(getResources().getString(R.string.app_name));
-                                pDialog.setContentText(Constants.AESDecryptEntity(res.getString("message")));
+                                pDialog.setContentText(Constants.Decrypt(res.getString("message")));
                                 pDialog.setConfirmText(getResources().getString(R.string.ok));
                                 pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                     @Override
@@ -237,7 +237,7 @@ public class ServiciesActivity extends AppCompatActivity {
                 //Adding parameters
 
                 try {
-                    params.put("categoria", Constants.AESEncryptEntity(finalid));
+                    params.put("categoria", Constants.Encrypt(finalid));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

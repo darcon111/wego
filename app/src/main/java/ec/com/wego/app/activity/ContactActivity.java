@@ -182,7 +182,7 @@ public class ContactActivity extends AppCompatActivity {
         pDialog.setCancelable(true);
         pDialog.show();
 
-        Constants.deleteCache(ContactActivity.this);
+        //Constants.deleteCache(ContactActivity.this);
 
         final String finalPersona = persona_id;
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"getContacto/format/json",
@@ -203,7 +203,7 @@ public class ContactActivity extends AppCompatActivity {
 
                         try {
 
-                            if(Constants.AESDecryptEntity(res[0].getString("result")).equals("OK") ){
+                            if(Constants.Decrypt(res[0].getString("result")).equals("OK") ){
 
 
 
@@ -232,7 +232,7 @@ public class ContactActivity extends AppCompatActivity {
                                             @Override
                                             public void run() {
                                                 try {
-                                                    mListContactos.add(new Contacts(Integer.parseInt(Constants.AESDecryptEntity(finalMObj.getString("id"))),Constants.AESDecryptEntity(finalMObj.getString("tipo_contacto")),Constants.AESDecryptEntity(finalMObj.getString("valor")), Constants.AESDecryptEntity(finalMObj.getString("nombre")),Integer.parseInt(Constants.AESDecryptEntity(finalMObj.getString("is_principal"))) ));
+                                                    mListContactos.add(new Contacts(Integer.parseInt(Constants.Decrypt(finalMObj.getString("id"))),Constants.Decrypt(finalMObj.getString("tipo_contacto")),Constants.Decrypt(finalMObj.getString("valor")), Constants.Decrypt(finalMObj.getString("nombre")),Integer.parseInt(Constants.Decrypt(finalMObj.getString("is_principal"))) ));
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
                                                 }
@@ -295,7 +295,7 @@ public class ContactActivity extends AppCompatActivity {
 
                                 pDialog= new SweetAlertDialog(ContactActivity.this, SweetAlertDialog.ERROR_TYPE);
                                 pDialog.setTitleText(getResources().getString(R.string.app_name));
-                                pDialog.setContentText(Constants.AESDecryptEntity(res[0].getString("message")));
+                                pDialog.setContentText(Constants.Decrypt(res[0].getString("message")));
                                 pDialog.setConfirmText(getResources().getString(R.string.ok));
                                 pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                     @Override
@@ -351,7 +351,7 @@ public class ContactActivity extends AppCompatActivity {
                 //Adding parameters
 
                 try {
-                    params.put("persona_id", Constants.AESEncryptEntity(finalPersona));
+                    params.put("persona_id", Constants.Encrypt(finalPersona));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -390,7 +390,7 @@ public class ContactActivity extends AppCompatActivity {
         pDialog.setCancelable(true);
         pDialog.show();
 
-        Constants.deleteCache(getApplicationContext());
+        //Constants.deleteCache(getApplicationContext());
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"save_contacto_setprincipal/format/json",
                 new Response.Listener<String>() {
@@ -508,9 +508,9 @@ public class ContactActivity extends AppCompatActivity {
                 //Adding parameters
 
                 try {
-                    params.put("persona_id", Constants.AESEncryptEntity(appPreferences.getUserId()));
-                    params.put("id", Constants.AESEncryptEntity(String.valueOf(mListContactos.get(i).getId())));
-                    params.put("origen_crea", Constants.AESEncryptEntity(Constants.getIPAddress(true)));
+                    params.put("persona_id", Constants.Encrypt(appPreferences.getUserId()));
+                    params.put("id", Constants.Encrypt(String.valueOf(mListContactos.get(i).getId())));
+                    params.put("origen_crea", Constants.Encrypt(Constants.getIPAddress(true)));
 
 
                 } catch (Exception e) {
@@ -551,7 +551,7 @@ public class ContactActivity extends AppCompatActivity {
         pDialog.setCancelable(true);
         pDialog.show();
 
-        Constants.deleteCache(getApplicationContext());
+        //Constants.deleteCache(getApplicationContext());
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"save_contacto_delete/format/json",
                 new Response.Listener<String>() {
@@ -658,9 +658,9 @@ public class ContactActivity extends AppCompatActivity {
                 //Adding parameters
 
                 try {
-                    params.put("persona_id", Constants.AESEncryptEntity(appPreferences.getUserId()));
-                    params.put("id", Constants.AESEncryptEntity(String.valueOf(mListContactos.get(i).getId())));
-                    params.put("origen_crea", Constants.AESEncryptEntity(Constants.getIPAddress(true)));
+                    params.put("persona_id", Constants.Encrypt(appPreferences.getUserId()));
+                    params.put("id", Constants.Encrypt(String.valueOf(mListContactos.get(i).getId())));
+                    params.put("origen_crea", Constants.Encrypt(Constants.getIPAddress(true)));
 
 
                 } catch (Exception e) {

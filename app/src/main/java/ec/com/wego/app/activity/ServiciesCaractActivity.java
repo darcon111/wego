@@ -121,7 +121,7 @@ public class ServiciesCaractActivity extends AppCompatActivity {
         pDialog.setCancelable(true);
         pDialog.show();
 
-        Constants.deleteCache(ServiciesCaractActivity.this);
+        //Constants.deleteCache(ServiciesCaractActivity.this);
 
         final String finalid = id;
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"getServiciosCaract/format/json",
@@ -142,7 +142,7 @@ public class ServiciesCaractActivity extends AppCompatActivity {
 
                         try {
 
-                            if(Constants.AESDecryptEntity(res.getString("result")).equals("OK") ){
+                            if(Constants.Decrypt(res.getString("result")).equals("OK") ){
                                 final JSONArray mObjResp = res.getJSONArray("data");
                                 final JSONObject[] mObj = new JSONObject[1];
 
@@ -187,7 +187,7 @@ public class ServiciesCaractActivity extends AppCompatActivity {
 
                                 pDialog= new SweetAlertDialog(ServiciesCaractActivity.this, SweetAlertDialog.ERROR_TYPE);
                                 pDialog.setTitleText(getResources().getString(R.string.app_name));
-                                pDialog.setContentText(Constants.AESDecryptEntity(res.getString("message")));
+                                pDialog.setContentText(Constants.Decrypt(res.getString("message")));
                                 pDialog.setConfirmText(getResources().getString(R.string.ok));
                                 pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                     @Override
@@ -243,7 +243,7 @@ public class ServiciesCaractActivity extends AppCompatActivity {
                 //Adding parameters
 
                 try {
-                    params.put("servicio_id", Constants.AESEncryptEntity(finalid));
+                    params.put("servicio_id", Constants.Encrypt(finalid));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

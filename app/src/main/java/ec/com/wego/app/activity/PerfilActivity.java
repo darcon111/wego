@@ -475,7 +475,7 @@ public class PerfilActivity extends AppCompatActivity implements
         pDialog.setCancelable(true);
         pDialog.show();
 
-        Constants.deleteCache(getApplicationContext());
+        //Constants.deleteCache(getApplicationContext());
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"getDataPerfil/format/json",
                 new Response.Listener<String>() {
@@ -505,8 +505,8 @@ public class PerfilActivity extends AppCompatActivity implements
                                     public void run() {
                                         try {
 
-                                            String nombres = Constants.AESDecryptEntity(mObj.getString("nombres"));
-                                            String apellidos = Constants.AESDecryptEntity(mObj.getString("apellidos"));
+                                            String nombres = Constants.Decrypt(mObj.getString("nombres"));
+                                            String apellidos = Constants.Decrypt(mObj.getString("apellidos"));
 
                                             txtNombres.setText(nombres);
                                             txtApellidos.setText(apellidos);
@@ -521,16 +521,16 @@ public class PerfilActivity extends AppCompatActivity implements
                                                 txtApellidos.setEnabled(false);
                                             }
 
-                                            txtFecha.setText(Constants.AESDecryptEntity(mObj.getString("fecha_nacimiento")));
-                                            txtIdentificacion.setText(Constants.AESDecryptEntity(mObj.getString("identificacion")));
+                                            txtFecha.setText(Constants.Decrypt(mObj.getString("fecha_nacimiento")));
+                                            txtIdentificacion.setText(Constants.Decrypt(mObj.getString("identificacion")));
 
-                                            telefono =  Constants.AESDecryptEntity(mObj.getString("telefono"));
+                                            telefono =  Constants.Decrypt(mObj.getString("telefono"));
                                             txttelefono.setText(telefono);
 
-                                            select_tipo_identificacion = Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("tipo_identificacion")));
-                                            select_estado = Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("estado_civil")));
-                                            select_ciudad = Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("ciudad_id")));
-                                            select_genero = Integer.parseInt(Constants.AESDecryptEntity(mObj.getString("genero")));
+                                            select_tipo_identificacion = Integer.parseInt(Constants.Decrypt(mObj.getString("tipo_identificacion")));
+                                            select_estado = Integer.parseInt(Constants.Decrypt(mObj.getString("estado_civil")));
+                                            select_ciudad = Integer.parseInt(Constants.Decrypt(mObj.getString("ciudad_id")));
+                                            select_genero = Integer.parseInt(Constants.Decrypt(mObj.getString("genero")));
 
 
 
@@ -577,10 +577,10 @@ public class PerfilActivity extends AppCompatActivity implements
                                         {
                                             JSONObject temp= list.getJSONObject(x);
 
-                                            list_tipo_identificacion.add(Constants.AESDecryptEntity(temp.getString("nombre")));
-                                            arrayIdentificacion.add(new Identificacion(Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))),Constants.AESDecryptEntity(temp.getString("nombre"))));
+                                            list_tipo_identificacion.add(Constants.Decrypt(temp.getString("nombre")));
+                                            arrayIdentificacion.add(new Identificacion(Integer.parseInt(Constants.Decrypt(temp.getString("id"))),Constants.Decrypt(temp.getString("nombre"))));
 
-                                            if (Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))) == select_tipo_identificacion)
+                                            if (Integer.parseInt(Constants.Decrypt(temp.getString("id"))) == select_tipo_identificacion)
                                             {
                                                 select_tipo_identificacion = x;
                                             }
@@ -613,10 +613,10 @@ public class PerfilActivity extends AppCompatActivity implements
                                         {
                                             JSONObject temp = list2.getJSONObject(x);
 
-                                            list_estado_civil.add(Constants.AESDecryptEntity(temp.getString("nombre")));
-                                            arrayEstadoCivil.add(new EstadoCivil(Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))),Constants.AESDecryptEntity(temp.getString("nombre"))));
+                                            list_estado_civil.add(Constants.Decrypt(temp.getString("nombre")));
+                                            arrayEstadoCivil.add(new EstadoCivil(Integer.parseInt(Constants.Decrypt(temp.getString("id"))),Constants.Decrypt(temp.getString("nombre"))));
 
-                                            if (Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))) == select_estado)
+                                            if (Integer.parseInt(Constants.Decrypt(temp.getString("id"))) == select_estado)
                                             {
                                                 select_estado = x;
                                             }
@@ -651,10 +651,10 @@ public class PerfilActivity extends AppCompatActivity implements
                                             {
                                                 JSONObject temp = list3.getJSONObject(x);
 
-                                                list_cuidad.add(Constants.AESDecryptEntity(temp.getString("nombre")));
-                                                arrayCity.add(new City(Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))),Constants.AESDecryptEntity(temp.getString("nombre"))));
+                                                list_cuidad.add(Constants.Decrypt(temp.getString("nombre")));
+                                                arrayCity.add(new City(Integer.parseInt(Constants.Decrypt(temp.getString("id"))),Constants.Decrypt(temp.getString("nombre"))));
 
-                                                if (Integer.parseInt(Constants.AESDecryptEntity(temp.getString("id"))) == select_ciudad)
+                                                if (Integer.parseInt(Constants.Decrypt(temp.getString("id"))) == select_ciudad)
                                                 {
                                                     select_ciudad = x;
                                                 }
@@ -744,7 +744,7 @@ public class PerfilActivity extends AppCompatActivity implements
                 //Adding parameters
 
                 try {
-                    params.put("userid", Constants.AESEncryptEntity(app.getUserId()));
+                    params.put("userid", Constants.Encrypt(app.getUserId()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -1053,7 +1053,7 @@ public class PerfilActivity extends AppCompatActivity implements
         pDialog.setCancelable(true);
         pDialog.show();
 
-        Constants.deleteCache(getApplicationContext());
+        //Constants.deleteCache(getApplicationContext());
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"saveImagen/format/json",
                 new Response.Listener<String>() {
@@ -1174,17 +1174,17 @@ public class PerfilActivity extends AppCompatActivity implements
 
                 params.put("image", image);
                 try {
-                    params.put("userid", Constants.AESEncryptEntity(app.getUserId()));
-                    params.put("nombres", Constants.AESEncryptEntity(txtNombres.getText().toString()));
-                    params.put("apellidos", Constants.AESEncryptEntity(txtApellidos.getText().toString()));
-                    //params.put("identificacion", Constants.AESEncryptEntity(txtIdentificacion.getText().toString()));
-                    //params.put("fecha_nacimiento", Constants.AESEncryptEntity(txtFecha.getText().toString()));
-                    params.put("telefono", Constants.AESEncryptEntity(txttelefono.getText().toString()));
-                    params.put("origen_mod",Constants.AESEncryptEntity(Constants.getIPAddress(true)));
+                    params.put("userid", Constants.Encrypt(app.getUserId()));
+                    params.put("nombres", Constants.Encrypt(txtNombres.getText().toString()));
+                    params.put("apellidos", Constants.Encrypt(txtApellidos.getText().toString()));
+                    //params.put("identificacion", Constants.Encrypt(txtIdentificacion.getText().toString()));
+                    //params.put("fecha_nacimiento", Constants.Encrypt(txtFecha.getText().toString()));
+                    params.put("telefono", Constants.Encrypt(txttelefono.getText().toString()));
+                    params.put("origen_mod",Constants.Encrypt(Constants.getIPAddress(true)));
 
-                    //params.put("tipo_identificacion", Constants.AESEncryptEntity(tipo_identificacion));
-                    // params.put("estado_civil", Constants.AESEncryptEntity(estado_civil));
-                    // params.put("ciudad_id", Constants.AESEncryptEntity(ciudad));
+                    //params.put("tipo_identificacion", Constants.Encrypt(tipo_identificacion));
+                    // params.put("estado_civil", Constants.Encrypt(estado_civil));
+                    // params.put("ciudad_id", Constants.Encrypt(ciudad));
 
                 } catch (Exception e) {
                     e.printStackTrace();
