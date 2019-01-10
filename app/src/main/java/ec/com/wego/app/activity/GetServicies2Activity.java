@@ -191,9 +191,8 @@ public class GetServicies2Activity extends AppCompatActivity {
                     intent.putExtra("servicio_id", extras.getString("servicio_id"));
                     intent.putExtra("id_contacto", String.valueOf(id_contacto));
                     intent.putExtra("id_ubicacion", String.valueOf(id_ubicacion));
-
-
                     startActivity(intent);
+                    finish();
 
 
                 }

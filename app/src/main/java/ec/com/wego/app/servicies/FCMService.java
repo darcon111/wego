@@ -94,6 +94,7 @@ public class FCMService extends FirebaseMessagingService {
             app = new AppPreferences(getApplicationContext());
             app.setFirebasetoken(token);
             app.setFlag("1");
+
         } catch (Exception e) {
             e.printStackTrace();
         }

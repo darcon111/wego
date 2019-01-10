@@ -458,7 +458,7 @@ public class MainActivity extends AppCompatActivity {
 
                         try {
 
-                            if(Constants.Decrypt(res[0].getString("result")).equals("OK") ){
+                            if(res[0].getString("result").equals("OK")) {
 
 
 
@@ -613,6 +613,8 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
                     params.put("email", Constants.Encrypt(finalEmail));
+                    params.put("token", appPreferences.getFirebasetoken());
+                    params.put("cargo", Constants.Encrypt("1"));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

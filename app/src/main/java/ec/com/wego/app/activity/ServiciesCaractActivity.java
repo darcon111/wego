@@ -306,6 +306,7 @@ public class ServiciesCaractActivity extends AppCompatActivity {
                         Intent intent = new Intent(ServiciesCaractActivity.this, GetServiciesActivity.class);
                         intent.putExtra("id", String.valueOf(i));
                         startActivity(intent);
+                        finish();
 
                     }
                 });

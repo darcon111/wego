@@ -92,7 +92,7 @@ public class ScreenSlidePageFragment extends Fragment {
 
 
 
-        TextView txt=(TextView) rootView.findViewById(R.id.txt);
+        TextView txt=(TextView) rootView.findViewById(R.id.txtFecha);
         txt.setText(this.text);
 
 

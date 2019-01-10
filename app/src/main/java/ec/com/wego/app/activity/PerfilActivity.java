@@ -53,6 +53,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthSettings;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -967,7 +968,15 @@ public class PerfilActivity extends AppCompatActivity implements
 
             //fragment.setVisibility(View.VISIBLE);
 
-            mCallBacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseAuthSettings firebaseAuthSettings = firebaseAuth.getFirebaseAuthSettings();
+
+        // Configure faking the auto-retrieval with the whitelisted numbers.
+        firebaseAuthSettings.setAutoRetrievedSmsCodeForPhoneNumber(num, "123456");
+
+
+
+        mCallBacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                 @Override
                 public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
                     Log.d("JEJE", "onVerificationCompleted:" + phoneAuthCredential);
@@ -1181,6 +1190,7 @@ public class PerfilActivity extends AppCompatActivity implements
                     //params.put("fecha_nacimiento", Constants.Encrypt(txtFecha.getText().toString()));
                     params.put("telefono", Constants.Encrypt(txttelefono.getText().toString()));
                     params.put("origen_mod",Constants.Encrypt(Constants.getIPAddress(true)));
+                    params.put("cargo",Constants.Encrypt("1"));
 
                     //params.put("tipo_identificacion", Constants.Encrypt(tipo_identificacion));
                     // params.put("estado_civil", Constants.Encrypt(estado_civil));

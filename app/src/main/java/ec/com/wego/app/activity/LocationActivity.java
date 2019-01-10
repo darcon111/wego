@@ -245,6 +245,8 @@ public class LocationActivity extends AppCompatActivity {
                                                         }
                                                     });
                                                     pDialog.show();
+
+                                                    select++;
                                                 }
                                                 mLocationAdapter.notifyItemChanged(finalX);
                                                 //Constants.deleteCache(LocationActivity.this);
@@ -818,7 +820,7 @@ public class LocationActivity extends AppCompatActivity {
                         returnIntent.putExtra("id_ubicacion",String.valueOf(mListLocations.get(i).getId()));
                         returnIntent.putExtra("ubicacion",String.valueOf(mListLocations.get(i).getNombre()));
                         setResult(Activity.RESULT_OK,returnIntent);
-
+                        finish();
 
                     }
                 });

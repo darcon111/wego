@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -96,6 +97,7 @@ public class PayPal extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_main);
+
 
         app = new AppPreferences(getApplicationContext());
 
@@ -248,15 +250,13 @@ public class PayPal extends AppCompatActivity  {
 
                         try {
 
+                            onBackPressed();
+
                             if(res.getString("result").equals("OK") ){
                                 JSONArray mObjResp = res.getJSONArray("data");
                                 final JSONObject mObj = mObjResp.getJSONObject(0);
-
-
-
-
-
                                 pDialog.dismiss();
+
 
                             }else
                             {
@@ -330,6 +330,7 @@ public class PayPal extends AppCompatActivity  {
                     params.put("servicio_id", Constants.Encrypt(servicio_id));
                     params.put("contacto", Constants.Encrypt(contacto));
                     params.put("ubicacion", Constants.Encrypt(ubicacion));
+                    params.put("origen_crea", Constants.getIPAddress(true));
 
                 } catch (Exception e) {
                     e.printStackTrace();
