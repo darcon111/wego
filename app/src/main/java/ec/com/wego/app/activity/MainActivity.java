@@ -351,6 +351,9 @@ public class MainActivity extends AppCompatActivity {
                     switch (position) {
                         case 1:
 
+                            intent = new Intent(MainActivity.this,AyudaActivity.class);
+                            startActivity(intent);
+
                             break;
                         case 2:
                             intent = new Intent(MainActivity.this,MyServiciesActivity.class);
@@ -373,6 +376,8 @@ public class MainActivity extends AppCompatActivity {
 
                         case 5:
 
+                            intent = new Intent(MainActivity.this,TermsActivity.class);
+                            startActivity(intent);
 
                             break;
 

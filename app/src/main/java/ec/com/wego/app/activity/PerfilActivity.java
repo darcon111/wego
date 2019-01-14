@@ -525,7 +525,7 @@ public class PerfilActivity extends AppCompatActivity implements
                                             txtFecha.setText(Constants.Decrypt(mObj.getString("fecha_nacimiento")));
                                             txtIdentificacion.setText(Constants.Decrypt(mObj.getString("identificacion")));
 
-                                            telefono =  Constants.Decrypt(mObj.getString("telefono"));
+                                            telefono =  "0"+Constants.Decrypt(mObj.getString("telefono"));
                                             txttelefono.setText(telefono);
 
                                             select_tipo_identificacion = Integer.parseInt(Constants.Decrypt(mObj.getString("tipo_identificacion")));

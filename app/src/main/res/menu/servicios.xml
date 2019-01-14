@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group >
+        <item
+            android:id="@+id/all"
+            android:enabled="true"
+            android:title="@string/todas"
+            android:visible="true" />
+        <item
+            android:id="@+id/pendi"
+            android:enabled="true"
+            android:title="@string/pendientes"
+            android:visible="true" />
+        <item
+            android:id="@+id/cancel"
+            android:enabled="true"
+            android:title="@string/canceladas"
+            android:visible="true" />
+
+        <item
+            android:id="@+id/proceso"
+            android:enabled="true"
+            android:title="@string/proceso"
+            android:visible="true" />
+
+        <item
+            android:id="@+id/termi"
+            android:enabled="true"
+            android:title="@string/terminadas"
+            android:visible="true" />
+
+    </group>
+</menu>

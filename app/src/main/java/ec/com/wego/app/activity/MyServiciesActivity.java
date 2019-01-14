@@ -13,13 +13,17 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +55,7 @@ import ec.com.wego.app.R;
 import ec.com.wego.app.clases.Ordenes;
 import ec.com.wego.app.config.AppPreferences;
 import ec.com.wego.app.config.Constants;
+import ec.com.wego.app.holder.Categories;
 
 public class MyServiciesActivity extends AppCompatActivity {
 
@@ -60,6 +65,7 @@ public class MyServiciesActivity extends AppCompatActivity {
     private String TAG = MyServiciesActivity.class.getName();
     private RecyclerView mServiciosRecyclerView;
     public static ArrayList<Ordenes> mListServicios;
+    private ArrayList<Ordenes> mListServiciosFilter;
     private ServiciesRecycleAdapter mServiciesAdapter;
 
     @Override
@@ -96,6 +102,7 @@ public class MyServiciesActivity extends AppCompatActivity {
         mServiciosRecyclerView.setAdapter(mServiciesAdapter);
 
         mListServicios = new ArrayList<Ordenes>();
+        mListServiciosFilter = new ArrayList<Ordenes>();
 
 
 
@@ -114,10 +121,13 @@ public class MyServiciesActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         /* secondary menu*/
-        //getMenuInflater().inflate(R.menu.add, menu);
+        getMenuInflater().inflate(R.menu.servicios, menu);
         //item = menu.findItem(R.id.action_save);
+        super.onCreateOptionsMenu(menu);
         return true;
     }
+
+
 
     @Override
     public void onBackPressed() {
@@ -134,6 +144,22 @@ public class MyServiciesActivity extends AppCompatActivity {
                 finish();
                 //------------
                 return true;
+            case R.id.all:
+                mServiciesAdapter.getFilter().filter("-1");
+                return true;
+            case R.id.pendi:
+                mServiciesAdapter.getFilter().filter("1");
+                return true;
+            case R.id.cancel:
+                mServiciesAdapter.getFilter().filter("0");
+                return true;
+            case R.id.proceso:
+                mServiciesAdapter.getFilter().filter("2");
+                return true;
+            case R.id.termi:
+                mServiciesAdapter.getFilter().filter("3");
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -206,7 +232,7 @@ public class MyServiciesActivity extends AppCompatActivity {
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
                                                 }
-
+                                                mListServiciosFilter = mListServicios;
                                                 mServiciesAdapter.notifyItemChanged(finalX);
                                                 //Constants.deleteCache(LocationActivity.this);
 
@@ -316,7 +342,7 @@ public class MyServiciesActivity extends AppCompatActivity {
 
     /* adapter*/
 
-    public class ServiciesRecycleAdapter extends RecyclerView.Adapter<ServiciesRecycleHolder> {
+    public class ServiciesRecycleAdapter extends RecyclerView.Adapter<ServiciesRecycleHolder>   implements Filterable {
         private int lastPosition = -1;
 
         @Override
@@ -331,8 +357,8 @@ public class MyServiciesActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final  ServiciesRecycleHolder productHolder, final int i) {
 
-            productHolder.mtxtNombre.setText(mListServicios.get(i).getName());
-            productHolder.mtxtFecha.setText(mListServicios.get(i).getFecha());
+            productHolder.mtxtNombre.setText(mListServiciosFilter.get(i).getName());
+            productHolder.mtxtFecha.setText(mListServiciosFilter.get(i).getFecha());
 
 
 
@@ -345,13 +371,13 @@ public class MyServiciesActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return mListServicios.size();
+            return mListServiciosFilter.size();
         }
 
         public void removeItem(int position) {
-            mListServicios.remove(position);
+            mListServiciosFilter.remove(position);
             notifyItemRemoved(position);
-            notifyItemRangeChanged(position, mListServicios.size());
+            notifyItemRangeChanged(position, mListServiciosFilter.size());
             //Signal.get().reset();
 
 
@@ -370,6 +396,45 @@ public class MyServiciesActivity extends AppCompatActivity {
                 viewToAnimate.startAnimation(animation);
                 lastPosition = position;
             }
+        }
+
+        @Override
+        public Filter getFilter() {
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence charSequence) {
+                    String charString = charSequence.toString();
+                    if (charString.isEmpty()) {
+                        mListServiciosFilter = mListServicios;
+                    } else {
+                        ArrayList<Ordenes> filteredList = new ArrayList<>();
+                        for (Ordenes row : mListServicios) {
+
+                            // name match condition. this might differ depending on your requirement
+                            // here we are looking for name or phone number match
+
+                            if(charString.equals("-1"))
+                            {
+                                filteredList.add(row);
+                            }else if (row.getEstado()==Integer.parseInt(charString)) {
+                                filteredList.add(row);
+                            }
+                        }
+
+                        mListServiciosFilter = filteredList;
+                    }
+
+                    FilterResults filterResults = new FilterResults();
+                    filterResults.values = mListServiciosFilter;
+                    return filterResults;
+                }
+
+                @Override
+                protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                    mListServiciosFilter = (ArrayList<Ordenes>) filterResults.values;
+                    notifyDataSetChanged();
+                }
+            };
         }
 
 

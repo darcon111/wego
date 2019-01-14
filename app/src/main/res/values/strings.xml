@@ -127,12 +127,15 @@
     <string name="total">Total</string>
     <string name="pagar">Pagar</string>
     <string name="infor">Información</string>
+    <string name="todas">Todas</string>
+    <string name="pendientes">Pendientes</string>
+    <string name="canceladas">Canceladas</string>
+    <string name="proceso">En Proceso</string>
+    <string name="terminadas">Terminadas</string>
 
 
     <string name="default_notification_channel_id">1000005</string>
     <string name="api_maps">AIzaSyAL0XFEOH3H9SZ2nXE0Ot_ZZph7yaOBpzE</string>
-
-
 
 
 </resources>

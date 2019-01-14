@@ -123,6 +123,17 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
             TextView editar= (TextView) v.findViewById(R.id.editperfil);
 
+            CircleImageView imageView = (CircleImageView) v.findViewById(R.id.circleView);
+
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, PerfilActivity.class);
+                    mContext.startActivity(intent);
+                }
+            });
+
+
             editar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
