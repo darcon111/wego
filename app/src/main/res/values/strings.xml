@@ -132,6 +132,9 @@
     <string name="canceladas">Canceladas</string>
     <string name="proceso">En Proceso</string>
     <string name="terminadas">Terminadas</string>
+    <string name="calificar">Calificar</string>
+    <string name="detalle">Detalle</string>
+    <string name="cancelarconsulta">Esta seguro que desea cancelar la orden ?</string>
 
 
     <string name="default_notification_channel_id">1000005</string>

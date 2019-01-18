@@ -14,6 +14,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +26,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +48,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
@@ -67,6 +71,7 @@ public class MyServiciesActivity extends AppCompatActivity {
     public static ArrayList<Ordenes> mListServicios;
     private ArrayList<Ordenes> mListServiciosFilter;
     private ServiciesRecycleAdapter mServiciesAdapter;
+    private PopupMenu popupMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -340,6 +345,146 @@ public class MyServiciesActivity extends AppCompatActivity {
 
     }
 
+
+    private void cancelarTask(final int orden_id, final int position){
+
+        final JSONObject[] res = {null};
+        //Showing the progress dialog
+        pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+        pDialog.getProgressHelper().setBarColor(Color.parseColor(getString(R.string.colorAccent)));
+        pDialog.setTitleText(getResources().getString(R.string.auth));
+        pDialog.setCancelable(true);
+        pDialog.show();
+
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_SERVER+"cancelar_orden/format/json",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String responde) {
+                        Log.d(TAG, responde);
+
+                        //Showing toast message of the response
+
+
+                        try {
+                            res[0] = new JSONObject(responde);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            pDialog.dismiss();
+                        }
+
+                        try {
+
+                            if(res[0].getString("result").equals("OK") ){
+
+                                 pDialog.dismiss();
+
+
+                                pDialog= new SweetAlertDialog(MyServiciesActivity.this, SweetAlertDialog.SUCCESS_TYPE);
+                                pDialog.setTitleText(getResources().getString(R.string.app_name));
+                                pDialog.setContentText(Constants.Decrypt(res[0].getString("message")));
+                                pDialog.setConfirmText(getResources().getString(R.string.ok));
+                                pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sDialog) {
+                                        sDialog.dismissWithAnimation();
+                                        mServiciesAdapter.removeItem(position);
+
+                                    }
+                                });
+                                pDialog.show();
+
+
+                            }else
+                            {
+                                pDialog.dismiss();
+
+
+                                pDialog= new SweetAlertDialog(MyServiciesActivity.this, SweetAlertDialog.ERROR_TYPE);
+                                pDialog.setTitleText(getResources().getString(R.string.app_name));
+                                pDialog.setContentText(Constants.Decrypt(res[0].getString("message")));
+                                pDialog.setConfirmText(getResources().getString(R.string.ok));
+                                pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sDialog) {
+                                        sDialog.dismissWithAnimation();
+
+                                        finish();
+                                    }
+                                });
+                                pDialog.show();
+
+
+
+
+                            }
+                        } catch (JSONException e) {
+                            pDialog.dismiss();
+                            Log.d(TAG, e.toString());
+                            e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        //Dismissing the progress dialog
+                        pDialog.dismiss();
+
+                        if(volleyError.networkResponse != null && volleyError.networkResponse.data != null){
+                            VolleyError error = new VolleyError(new String(volleyError.networkResponse.data));
+                            volleyError = error;
+                        }
+
+                        //Showing toast
+                        Log.d(TAG, volleyError.toString());
+                        Toast.makeText(MyServiciesActivity.this, volleyError.toString(), Toast.LENGTH_LONG).show();
+
+
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                //Creating parameters
+                Map<String,String> params = new Hashtable<String, String>();
+
+                //Adding parameters
+                try {
+                    params.put("userid", Constants.Encrypt(appPreferences.getUserId()));
+                    params.put("idorden", Constants.Encrypt(String.valueOf(orden_id)));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                //returning parameters
+                return params;
+            }
+        };
+
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                50000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        RequestQueue volleyQueue = Volley.newRequestQueue(this);
+        volleyQueue.add(stringRequest);
+        DiskBasedCache cache = new DiskBasedCache(getCacheDir(), 500 * 1024 * 1024);
+        volleyQueue = new RequestQueue(cache, new BasicNetwork(new HurlStack()));
+        volleyQueue.start();
+
+
+
+    }
+
+
+
     /* adapter*/
 
     public class ServiciesRecycleAdapter extends RecyclerView.Adapter<ServiciesRecycleHolder>   implements Filterable {
@@ -359,6 +504,121 @@ public class MyServiciesActivity extends AppCompatActivity {
 
             productHolder.mtxtNombre.setText(mListServiciosFilter.get(i).getName());
             productHolder.mtxtFecha.setText(mListServiciosFilter.get(i).getFecha());
+
+            if (mListServiciosFilter.get(i).getEstado()!=0)
+            {
+
+                productHolder.mimgMenu.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if (popupMenu != null) {
+                            popupMenu.dismiss();
+                        }
+
+
+                        popupMenu = new PopupMenu(v.getContext(), v);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            popupMenu.setGravity(Gravity.CENTER);
+                        }
+                        if (mListServiciosFilter.get(i).getEstado() == 1) {
+                            popupMenu.inflate(R.menu.servicio_cancelar);
+                        } else if (mListServiciosFilter.get(i).getEstado() == 2){
+                            popupMenu.inflate(R.menu.servicio_terminar);
+                        }else
+                        {
+                            popupMenu.inflate(R.menu.servicio_ver);
+                        }
+
+                        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+                            @Override
+                            public void onDismiss(PopupMenu menu) {
+                                popupMenu = null;
+                            }
+                        });
+
+
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+
+                                switch (item.getItemId()) {
+                                    case R.id.calificar:
+
+                                        Intent intent = new Intent(MyServiciesActivity.this, CalificarActivity.class);
+                                        intent.putExtra("id", String.valueOf(mListServiciosFilter.get(i).getId()));
+                                        startActivity(intent);
+
+
+                                        return true;
+
+                                    case R.id.detalle:
+
+                                        Intent intent2 = new Intent(MyServiciesActivity.this, DetalleActivity.class);
+                                        intent2.putExtra("id", String.valueOf(mListServiciosFilter.get(i).getId()));
+                                        startActivity(intent2);
+
+
+                                        return true;
+
+                                    case R.id.cancelar:
+
+
+                                            pDialog = new SweetAlertDialog(MyServiciesActivity.this, SweetAlertDialog.ERROR_TYPE);
+                                            pDialog.setTitleText(getResources().getString(R.string.app_name));
+                                            pDialog.setContentText(getResources().getString(R.string.cancelarconsulta));
+                                            pDialog.setConfirmText(getResources().getString(R.string.ok));
+                                            pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                @Override
+                                                public void onClick(SweetAlertDialog sDialog) {
+                                                    sDialog.dismissWithAnimation();
+                                                    cancelarTask(mListServiciosFilter.get(i).getId(),i);
+                                                }
+                                            });
+                                            pDialog.setCancelText(getResources().getString(R.string.no));
+                                            pDialog.show();
+
+
+                                        return true;
+
+                                    default:
+                                        return false;
+                                }
+
+
+                            }
+                        });
+
+                        try {
+                            Field[] fields = popupMenu.getClass().getDeclaredFields();
+                            for (Field field : fields) {
+                                if ("mPopup".equals(field.getName())) {
+                                    field.setAccessible(true);
+                                    Object menuPopupHelper = field.get(popupMenu);
+                                    Class<?> classPopupHelper = Class.forName(menuPopupHelper.getClass().getName());
+                                    Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon", boolean.class);
+                                    setForceIcons.invoke(menuPopupHelper, true);
+                                    break;
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
+                        popupMenu.show();
+
+
+
+
+
+                    }
+                });
+
+            }else
+            {
+                productHolder.mimgMenu.setVisibility(View.GONE);
+            }
 
 
 
@@ -443,6 +703,7 @@ public class MyServiciesActivity extends AppCompatActivity {
     public class  ServiciesRecycleHolder extends RecyclerView.ViewHolder {
         public TextView mtxtNombre;
         public TextView mtxtFecha;
+        public ImageView mimgMenu;
 
 
 
@@ -450,6 +711,7 @@ public class MyServiciesActivity extends AppCompatActivity {
             super(itemView);
             mtxtNombre = (TextView) itemView.findViewById(R.id.txtNombre);
             mtxtFecha = (TextView) itemView.findViewById(R.id.txtFecha);
+            mimgMenu = (ImageView) itemView.findViewById(R.id.menu);
 
         }
     }
