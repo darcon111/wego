@@ -1,5 +1,6 @@
 package ec.com.wego.app.activity;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -8,21 +9,22 @@ import android.os.Looper;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -59,7 +61,6 @@ import ec.com.wego.app.R;
 import ec.com.wego.app.clases.Ordenes;
 import ec.com.wego.app.config.AppPreferences;
 import ec.com.wego.app.config.Constants;
-import ec.com.wego.app.holder.Categories;
 
 public class MyServiciesActivity extends AppCompatActivity {
 
@@ -158,11 +159,17 @@ public class MyServiciesActivity extends AppCompatActivity {
             case R.id.cancel:
                 mServiciesAdapter.getFilter().filter("0");
                 return true;
-            case R.id.proceso:
+            case R.id.asig:
                 mServiciesAdapter.getFilter().filter("2");
+                return true;
+            case R.id.proceso:
+                mServiciesAdapter.getFilter().filter("5");
                 return true;
             case R.id.termi:
                 mServiciesAdapter.getFilter().filter("3");
+                return true;
+            case R.id.califi:
+                mServiciesAdapter.getFilter().filter("4");
                 return true;
 
             default:
@@ -231,7 +238,7 @@ public class MyServiciesActivity extends AppCompatActivity {
                                             public void run() {
                                                 try {
 
-                                                    mListServicios.add(new Ordenes(Integer.parseInt(Constants.Decrypt(finalMObj.getString("id"))),Constants.Decrypt(finalMObj.getString("nombre")),Integer.parseInt(Constants.Decrypt(finalMObj.getString("estado"))),Constants.Decrypt(finalMObj.getString("fecha"))));
+                                                    mListServicios.add(new Ordenes(Integer.parseInt(Constants.Decrypt(finalMObj.getString("id"))),Constants.Decrypt(finalMObj.getString("nombre")),Integer.parseInt(Constants.Decrypt(finalMObj.getString("estado"))),Constants.Decrypt(finalMObj.getString("fecha")),Constants.Decrypt(finalMObj.getString("fechaC"))));
 
 
                                                 } catch (Exception e) {
@@ -346,7 +353,7 @@ public class MyServiciesActivity extends AppCompatActivity {
     }
 
 
-    private void cancelarTask(final int orden_id, final int position){
+    private void cancelarTask(final int orden_id, final int position,final String observacion){
 
         final JSONObject[] res = {null};
         //Showing the progress dialog
@@ -388,7 +395,9 @@ public class MyServiciesActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(SweetAlertDialog sDialog) {
                                         sDialog.dismissWithAnimation();
-                                        mServiciesAdapter.removeItem(position);
+
+                                        mListServicios.get(position).setEstado(0);
+                                        mServiciesAdapter.notifyItemChanged(position);
 
                                     }
                                 });
@@ -457,6 +466,7 @@ public class MyServiciesActivity extends AppCompatActivity {
                 try {
                     params.put("userid", Constants.Encrypt(appPreferences.getUserId()));
                     params.put("idorden", Constants.Encrypt(String.valueOf(orden_id)));
+                    params.put("observacion", Constants.Encrypt(observacion));
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -525,6 +535,8 @@ public class MyServiciesActivity extends AppCompatActivity {
                             popupMenu.inflate(R.menu.servicio_cancelar);
                         } else if (mListServiciosFilter.get(i).getEstado() == 2){
                             popupMenu.inflate(R.menu.servicio_terminar);
+                        }else if(mListServiciosFilter.get(i).getEstado() == 4){
+                            popupMenu.inflate(R.menu.servicio_calificar);
                         }else
                         {
                             popupMenu.inflate(R.menu.servicio_ver);
@@ -554,7 +566,7 @@ public class MyServiciesActivity extends AppCompatActivity {
 
                                     case R.id.detalle:
 
-                                        Intent intent2 = new Intent(MyServiciesActivity.this, DetalleActivity.class);
+                                        Intent intent2 = new Intent(MyServiciesActivity.this, OrdenesActivity.class);
                                         intent2.putExtra("id", String.valueOf(mListServiciosFilter.get(i).getId()));
                                         startActivity(intent2);
 
@@ -564,7 +576,7 @@ public class MyServiciesActivity extends AppCompatActivity {
                                     case R.id.cancelar:
 
 
-                                            pDialog = new SweetAlertDialog(MyServiciesActivity.this, SweetAlertDialog.ERROR_TYPE);
+                                            pDialog = new SweetAlertDialog(MyServiciesActivity.this, SweetAlertDialog.WARNING_TYPE);
                                             pDialog.setTitleText(getResources().getString(R.string.app_name));
                                             pDialog.setContentText(getResources().getString(R.string.cancelarconsulta));
                                             pDialog.setConfirmText(getResources().getString(R.string.ok));
@@ -572,7 +584,10 @@ public class MyServiciesActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onClick(SweetAlertDialog sDialog) {
                                                     sDialog.dismissWithAnimation();
-                                                    cancelarTask(mListServiciosFilter.get(i).getId(),i);
+
+
+                                                    cancelar(mListServiciosFilter.get(i).getId(),i);
+
                                                 }
                                             });
                                             pDialog.setCancelText(getResources().getString(R.string.no));
@@ -619,6 +634,27 @@ public class MyServiciesActivity extends AppCompatActivity {
             {
                 productHolder.mimgMenu.setVisibility(View.GONE);
             }
+
+
+
+            if (mListServiciosFilter.get(i).getEstado()==0){
+                productHolder.mEstado.setText("Cancelado");
+            }else if (mListServiciosFilter.get(i).getEstado()==1){
+                productHolder.mEstado.setText("Creado");
+            }else if (mListServiciosFilter.get(i).getEstado()==2){
+                productHolder.mEstado.setText("Asignado");
+            }
+            else if (mListServiciosFilter.get(i).getEstado()==4){
+                productHolder.mEstado.setText("Pen. Calif");
+            } else if (mListServiciosFilter.get(i).getEstado()==5){
+                productHolder.mEstado.setText("En Proceso");
+            }
+            else{
+                //3 terminado
+                productHolder.mEstado.setText("Terminado");
+            }
+
+            productHolder.mCreacion.setText(mListServiciosFilter.get(i).getFechaCreacion());
 
 
 
@@ -704,16 +740,66 @@ public class MyServiciesActivity extends AppCompatActivity {
         public TextView mtxtNombre;
         public TextView mtxtFecha;
         public ImageView mimgMenu;
+        public TextView mEstado;
+        public TextView mCreacion;
 
 
 
         public  ServiciesRecycleHolder(View itemView) {
             super(itemView);
             mtxtNombre = (TextView) itemView.findViewById(R.id.txtNombre);
-            mtxtFecha = (TextView) itemView.findViewById(R.id.txtFecha);
+            mtxtFecha = (TextView) itemView.findViewById(R.id.txtFechac);
+            mEstado = (TextView) itemView.findViewById(R.id.txtEstado);
+            mCreacion = (TextView) itemView.findViewById(R.id.txtCreacion);
             mimgMenu = (ImageView) itemView.findViewById(R.id.menu);
 
+
         }
+    }
+
+    public void cancelar(final int orden, final int position)
+    {
+
+        final Dialog settingsDialog = new Dialog(this);
+        settingsDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        View v=getLayoutInflater().inflate(R.layout.item_cancelar
+                , null);
+
+        Button btnclose=(Button) v.findViewById(R.id.close);
+        btnclose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                settingsDialog.dismiss();
+            }
+        });
+
+        final EditText txtmotivo=(EditText) v.findViewById(R.id.txtMotivo);
+
+        Button btnsend=(Button) v.findViewById(R.id.send);
+        btnsend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(!txtmotivo.getText().toString().equals("")) {
+
+                    settingsDialog.dismiss();
+                    cancelarTask(orden,position,txtmotivo.getText().toString());
+                }else
+                {
+                    txtmotivo.setError(getString(R.string.motivo_ingrese));
+                }
+            }
+        });
+
+        settingsDialog.setContentView(v);
+        settingsDialog.show();
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(settingsDialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        settingsDialog.show();
+        settingsDialog.getWindow().setAttributes(lp);
     }
 
 

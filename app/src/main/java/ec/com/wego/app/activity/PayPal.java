@@ -131,7 +131,7 @@ public class PayPal extends AppCompatActivity  {
 
             costo = getIntent().getStringExtra("costo");
             fecha = getIntent().getStringExtra("fecha");
-            hora = getIntent().getStringExtra("hora");
+            hora = getIntent().getStringExtra("hora2");
             servicio_id = getIntent().getStringExtra("servicio_id");
             contacto = getIntent().getStringExtra("id_contacto");
             ubicacion = getIntent().getStringExtra("id_ubicacion");
@@ -225,7 +225,7 @@ public class PayPal extends AppCompatActivity  {
     private void save()
     {
         //Showing the progress dialog
-        pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+        pDialog = new SweetAlertDialog(PayPal.this, SweetAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(Color.parseColor(getString(R.string.colorAccent)));
         pDialog.setTitleText(getResources().getString(R.string.auth));
         pDialog.setCancelable(true);
@@ -250,12 +250,27 @@ public class PayPal extends AppCompatActivity  {
 
                         try {
 
-                            onBackPressed();
+
 
                             if(res.getString("result").equals("OK") ){
-                                JSONArray mObjResp = res.getJSONArray("data");
-                                final JSONObject mObj = mObjResp.getJSONObject(0);
+
+
                                 pDialog.dismiss();
+
+                                pDialog= new SweetAlertDialog(PayPal.this, SweetAlertDialog.SUCCESS_TYPE);
+                                pDialog.setTitleText(getResources().getString(R.string.app_name));
+                                pDialog.setContentText(res.getString("message"));
+                                pDialog.setConfirmText(getResources().getString(R.string.ok));
+                                pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sDialog) {
+                                        sDialog.dismissWithAnimation();
+
+                                        onBackPressed();
+
+                                    }
+                                });
+                                pDialog.show();
 
 
                             }else
@@ -331,6 +346,8 @@ public class PayPal extends AppCompatActivity  {
                     params.put("contacto", Constants.Encrypt(contacto));
                     params.put("ubicacion", Constants.Encrypt(ubicacion));
                     params.put("origen_crea", Constants.getIPAddress(true));
+                    params.put("imagen1", PhotoActivity.image1);
+                    params.put("imagen2", PhotoActivity.image2);
 
                 } catch (Exception e) {
                     e.printStackTrace();

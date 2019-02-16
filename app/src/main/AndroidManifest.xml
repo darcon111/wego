@@ -105,6 +105,7 @@
         <activity android:name=".activity.AddLocationActivity" />
         <activity android:name=".activity.PayPal" />
         <activity android:name=".activity.AyudaActivity" />
+        <activity android:name=".activity.OrdenesActivity" />
     </application>
 
 </manifest>

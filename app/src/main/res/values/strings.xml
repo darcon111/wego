@@ -135,7 +135,27 @@
     <string name="calificar">Calificar</string>
     <string name="detalle">Detalle</string>
     <string name="cancelarconsulta">Esta seguro que desea cancelar la orden ?</string>
-
+    <string name="motivo">Motivo</string>
+    <string name="motivo_ingrese">Error</string>
+    <string name="califica">Califica tu servicio</string>
+    <string name="puntual">Puntual</string>
+    <string name="calidad">Calidad Servicio</string>
+    <string name="rapidez">Rapidez</string>
+    <string name="calificacion">Seleccione la califacion</string>
+    <string name="servicio">Servicio</string>
+    <string name="cliente">Cliente</string>
+    <string name="fecha_orden">Fecha</string>
+    <string name="costo">Costo</string>
+    <string name="contacto_orden">Contacto</string>
+    <string name="ubicacion_orden">Ubicación</string>
+    <string name="pisp">Piso</string>
+    <string name="motivo_orden">Ingrese el motivo de la cancelación</string>
+    <string name="depar">Departamento</string>
+    <string name="ejecutar_orden">Ejecutar</string>
+    <string name="asignar_orden">Asignar</string>
+    <string name="orden">Orden Servicio</string>
+    <string name="asignar">Esta seguro que desea tomar esta orden ???</string>
+    <string name="trabajador">Trabajador</string>
 
     <string name="default_notification_channel_id">1000005</string>
     <string name="api_maps">AIzaSyAL0XFEOH3H9SZ2nXE0Ot_ZZph7yaOBpzE</string>

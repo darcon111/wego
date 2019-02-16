@@ -5,6 +5,6 @@
         android:id="@+id/cancelar"
         android:title="@string/cancelar" />
     <item
-        android:id="@+id/calificar"
-        android:title="@string/calificar" />
+        android:id="@+id/detalle"
+        android:title="Detalle" />
 </menu>

@@ -285,7 +285,7 @@
                         tools:layout_editor_absoluteY="384dp">
 
                         <android.support.design.widget.TextInputEditText
-                            android:id="@+id/txtFecha"
+                            android:id="@+id/txtFechac"
                             style="@style/editText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

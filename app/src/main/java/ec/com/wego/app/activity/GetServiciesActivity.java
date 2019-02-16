@@ -46,6 +46,7 @@ public class GetServiciesActivity extends AppCompatActivity implements
     private Button btnContinuar;
 
     private ArrayList<String> list_horario;
+    private ArrayList<String> list_horario2;
     private int idServicio;
 
     @Override
@@ -103,6 +104,7 @@ public class GetServiciesActivity extends AppCompatActivity implements
                 Intent intent = new Intent(GetServiciesActivity.this,GetServicies2Activity.class);
                 intent.putExtra("fecha",txtdia.getText().toString());
                 intent.putExtra("hora", list_horario.get(horario.getSelectedItemPosition()));
+                intent.putExtra("hora2", list_horario2.get(horario.getSelectedItemPosition()));
 
                 Serviciescarac servicio = ServiciesCaractActivity.mListServicies.get(Integer.parseInt(extras.getString("id")));
 
@@ -116,6 +118,7 @@ public class GetServiciesActivity extends AppCompatActivity implements
         });
 
         list_horario = new ArrayList<String>();
+        list_horario2 = new ArrayList<String>();
 
 
 
@@ -233,6 +236,7 @@ public class GetServiciesActivity extends AppCompatActivity implements
                 {
                     String temp = String.valueOf(x) + horario(x) + " - "+String.valueOf(x+1)+horario(x+1);
                     list_horario.add(temp);
+                    list_horario2.add(String.valueOf(x)+":00");
                 }
 
             }else{
@@ -243,6 +247,7 @@ public class GetServiciesActivity extends AppCompatActivity implements
                 {
                     String temp = String.valueOf(x) + horario(x) + " - "+String.valueOf(x+1)+horario(x+1);
                     list_horario.add(temp);
+                    list_horario2.add(String.valueOf(x)+":00");
                 }
 
             }
@@ -294,4 +299,5 @@ public class GetServiciesActivity extends AppCompatActivity implements
     {
         return (hora<=12)?"am":"pm";
     }
+
 }

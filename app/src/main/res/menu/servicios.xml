@@ -8,6 +8,9 @@
             android:title="@string/todas"
             android:visible="true" />
         <item
+            android:id="@+id/asig"
+            android:title="Asignado" />
+        <item
             android:id="@+id/pendi"
             android:enabled="true"
             android:title="@string/pendientes"
@@ -24,6 +27,9 @@
             android:title="@string/proceso"
             android:visible="true" />
 
+        <item
+            android:id="@+id/califi"
+            android:title="Pend. Califi." />
         <item
             android:id="@+id/termi"
             android:enabled="true"
